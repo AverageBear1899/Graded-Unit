@@ -1,5 +1,6 @@
 ﻿using GradedUnit.Models.Data;
 using GradedUnit.Models.ViewModels.Shop;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -262,6 +263,33 @@ namespace GradedUnit.Areas.Admin.Controllers
             return RedirectToAction("AddProduct");
         }
 
+        //GET : Admin/Shop/Prroducts
+        public ActionResult Products(int? page, int? catId)
+        {
+            //declare list of productvm
+            List<ProductVM> listOfProductVM;
+            //set page number
+            var pageNumber = page ?? 1;
+
+            using (Db db = new Db())
+            {
+                //init list
+                listOfProductVM = db.Products.ToArray()
+                                    .Where(x => catId == null || catId == 0 || x.CategoryId == catId)
+                                    .Select(x => new ProductVM(x))
+                                    .ToList();
+
+                //populate categories select list
+                ViewBag.Categories = new SelectList(db.Catagories.ToList(), "Id", "Name");
+                //set selected category
+                ViewBag.SelectedCat = catId.ToString();
+            }
+            //set pagination
+            var onePageOfProducts = listOfProductVM.ToPagedList(pageNumber, 5);
+            ViewBag.OnePageOfProducts = onePageOfProducts;
+            //return view
+            return View(listOfProductVM);
+        }
     }
 
 }
