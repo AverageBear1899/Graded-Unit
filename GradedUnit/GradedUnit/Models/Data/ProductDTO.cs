@@ -20,8 +20,10 @@ namespace GradedUnit.Models.Data
     public string CategoryName { get; set; }
     public int CategoryId { get; set; }
     public string ImageName { get; set; }
+    public int Quantity { get; set; }
 
-    [ForeignKey("CategoryId")]
+
+        [ForeignKey("CategoryId")]
     public virtual CategoryDTO Category { get; set; }
 
 

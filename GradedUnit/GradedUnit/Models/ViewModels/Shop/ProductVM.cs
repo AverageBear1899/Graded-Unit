@@ -25,6 +25,7 @@ namespace GradedUnit.Models.ViewModels.Shop
             CategoryName = row.CategoryName;
             CategoryId = row.CategoryId;
             ImageName = row.ImageName;
+            Quantity = row.Quantity;
         }
         public int Id { get; set; }
         [Required]
@@ -37,6 +38,7 @@ namespace GradedUnit.Models.ViewModels.Shop
         [Required]
         public int CategoryId { get; set; }
         public string ImageName { get; set; }
+        public int Quantity { get; set; }
 
         public IEnumerable <SelectListItem> Categories { get; set; }
         public IEnumerable<string> GalleryImages { get; set; }
