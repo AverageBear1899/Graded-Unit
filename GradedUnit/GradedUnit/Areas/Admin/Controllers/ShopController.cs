@@ -454,6 +454,49 @@ namespace GradedUnit.Areas.Admin.Controllers
             //redirect
             return RedirectToAction("Products");
         }
+
+        [HttpPost]
+        //POST : Admin/Shop/SaveGalleryImages
+        public void SaveGalleryImages(int id)
+        {
+            //loop through files
+            foreach (string fileName in Request.Files)
+                {
+                //init file
+                HttpPostedFileBase file = Request.Files[fileName];
+                //check its not null
+                if (file != null && file.ContentLength > 0)
+                {
+                    //set directory
+                    var originalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+
+                    string pathString1 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery");
+                    string pathString2 = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString() + "\\Gallery\\Thumbs");
+                    //set image path
+                    var path = string.Format("{0}\\{1}", pathString1, file.FileName);
+                    var path2 = string.Format("{0}\\{1}", pathString2, file.FileName);
+                    //save original and thumb
+                    file.SaveAs(path);
+                    WebImage img = new WebImage(file.InputStream);
+                    img.Resize(200, 200);
+                    img.Save(path2);
+                }
+                }
+            
+        }
+        [HttpPost]
+        //POST : Admin/Shop/DeleteImage
+        public void DeleteImage(int id, string imageName)
+        {
+            string fullpath1 = Request.MapPath("~/Images/Uploads/Products" + id.ToString() + "/Gallery/" + imageName);
+            string fullpath2 = Request.MapPath("~/Images/Uploads/Products" + id.ToString() + "/Gallery/Thumbs/" + imageName);
+
+            if (System.IO.File.Exists(fullpath1))
+                System.IO.File.Delete(fullpath1);
+
+            if (System.IO.File.Exists(fullpath2))
+                System.IO.File.Delete(fullpath2);
+        }
     }
 
 }
