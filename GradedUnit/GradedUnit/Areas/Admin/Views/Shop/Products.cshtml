@@ -31,22 +31,20 @@
         <th>
             Name
         </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Slug)
-        </th>
+         
         <th>
             Description
         </th>
         <th>
             Price
         </th>
-        
-        <th>
-            Image Name
-        </th>
         <th>
             Quantity
         </th>
+        <th>
+            Image
+        </th>
+        
         <th></th>
     </tr>
 
@@ -81,7 +79,7 @@
             <td>
                 @Html.ActionLink("Edit", "EditProduct", new { id = product.Id }) |
                
-                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id })
+                @Html.ActionLink("Delete", "DeleteProduct", new { id = product.Id }, new { @class = "delete" })
             </td>
         </tr>
     }
