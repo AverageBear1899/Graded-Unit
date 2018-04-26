@@ -18,3 +18,27 @@ span.ajax-text {
 table.sorting.categories td{
     padding: 20px !important
 }
+
+span.loader {
+    display: none !important; 
+    
+}
+
+span.ajaxmsg {
+    background: green;
+    color: white;
+    padding: 10px;
+    display: none !important;
+    position: absolute;
+    bottom: 0;
+    
+}
+
+.ajaxcart {
+    position: relative;
+    top: 5px;
+}
+
+.ib {
+    display: inline-block !important;
+}
