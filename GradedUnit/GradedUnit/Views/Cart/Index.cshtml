@@ -4,6 +4,7 @@
     ViewBag.Title = "Cart Details";
 }
 
+
 <h2>Your Cart</h2>
 
 @if (ViewBag.Message != null)
@@ -49,7 +50,7 @@ else
             @Html.DisplayFor(modelItem => item.QuantityOrdered)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.Price)
+            £@Html.DisplayFor(modelItem => item.Price)
         </td>
         <td>
             <img src="/Images/Uploads/Products/@item.ProductId/Thumbs/@item.Image" />

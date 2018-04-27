@@ -54,6 +54,8 @@ namespace GradedUnit.Controllers
                     qty += item.QuantityOrdered;
                     price += item.QuantityOrdered * item.Price;
                 }
+                model.QuantityOrdered = qty;
+                model.Price = price;
             }
             else
             {
@@ -124,7 +126,8 @@ namespace GradedUnit.Controllers
 
             //save cart to session
             Session["cart"] = cart;
-
+            //set tempdata
+            TempData["SM"] = "You have added a product!";
             //return partial view with model
             return PartialView(model);
         }
