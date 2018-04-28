@@ -122,14 +122,102 @@ namespace GradedUnit.Controllers
             }
             model.QuantityOrdered = qty;
             model.Price = price;
-            //change quantity available
+            
 
             //save cart to session
             Session["cart"] = cart;
-            //set tempdata
-            TempData["SM"] = "You have added a product!";
+            
             //return partial view with model
             return PartialView(model);
+        }
+
+        // GET: /Cart/IncrementProduct
+        public JsonResult IncrementProduct(int productId)
+        {
+            // Init cart list
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+
+            using (Db db = new Db())
+            {
+                //instance of product class
+                ProductDTO product = db.Products.Find(productId);
+                // Get cartVM from list
+                CartVM model = cart.FirstOrDefault(x => x.ProductId == productId);
+
+                // Increment qty
+                model.QuantityOrdered++;
+
+                // Store needed data
+                var result = new { qty = model.QuantityOrdered, price = model.Price };
+
+                //decrease quantity available
+                product.Quantity = product.Quantity - 1;
+                db.Entry(product).State = EntityState.Modified;
+                db.SaveChanges();
+                // Return json with data
+                return Json(result, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
+        // GET: /Cart/DecrementProduct
+        public ActionResult DecrementProduct(int productId)
+        {
+            //init cart
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+            using (Db db = new Db())
+            {
+                //instance of product class
+                ProductDTO product = db.Products.Find(productId);
+
+                //get model from list
+                CartVM model = cart.FirstOrDefault(x => x.ProductId == productId);
+
+                //decrement quantity
+                if (model.QuantityOrdered > 1)
+                {
+                    model.QuantityOrdered--;
+                }
+                else
+                {
+                    model.QuantityOrdered = 0;
+                    cart.Remove(model);
+                }
+                //store data
+                var result = new { qty = model.QuantityOrdered, price = model.Price };
+
+                //increase quantity available
+                product.Quantity = product.Quantity + 1;
+                db.Entry(product).State = EntityState.Modified;
+                db.SaveChanges();
+                //return json
+                return Json(result, JsonRequestBehavior.AllowGet);
+
+            }
+        }
+        // GET: /Cart/RemoveProduct
+        public void RemoveProduct(int productId)
+        {
+            //init cart list
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+            using (Db db = new Db()) {
+                //instance of product class
+                ProductDTO product = db.Products.Find(productId);
+
+                //get model from list
+                CartVM model = cart.FirstOrDefault(x => x.ProductId == productId);
+
+                //update quantity available
+                product.Quantity = product.Quantity + model.QuantityOrdered;
+                db.Entry(product).State = EntityState.Modified;
+                db.SaveChanges();
+
+                //remove model from list
+                cart.Remove(model);
+
+                
+
+            }
         }
     }
 }
