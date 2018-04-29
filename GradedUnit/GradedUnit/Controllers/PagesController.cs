@@ -75,5 +75,15 @@ namespace GradedUnit.Controllers
                 //return partial view with model
                 return PartialView(model);
         }
+
+        //GET: Index/CustomOrder
+        //[HttpGet]
+        public ActionResult CustomOrder()
+        {
+            return View("CustomOrder");
+        }
+
+        //[HttpPost]
+
     }
 }
