@@ -24,11 +24,59 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     @Html.Action("PagesMenuPartial", "Pages")
-                </ul>
-                <ul class="navbar-collapse collapse navbar-right">
-                    @Html.Action("CartPartial", "Cart")
+                    @if (Request.IsAuthenticated)
+                    {
+                        <li><a href="/account/logout">Logout</a></li>
+                    }
+                    else
+                    {
+                        if (ViewBag.Title == "Login")
+                        {
+                            <li class="active"><a href="/account/login">Login</a></li>
+
+                        }
+                        else
+                        {
+                            <li><a href="/account/login">Login</a></li>
+
+                        }
+
+                    }
+                    @if (Request.IsAuthenticated && User.IsInRole("User"))
+                    {
+                        if (ViewBag.Title == "User Profile")
+                        {
+                            <li class="active">@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+
+                        }
+                        else
+                        {
+                            <li>@Html.Action("UserNavPartial", "Account", new { area = "" })</li>
+
+                        }
+                    }
 
                 </ul>
+
+                @if (Request.IsAuthenticated && User.IsInRole("Admin"))
+                {
+                    <ul class="navbar-collapse collapse navbar-right adminarea">
+                        <li>@Html.ActionLink("Admin Area", "Index", "Dashboard", new { area = "Admin"}, null)</li>
+
+                    </ul>
+                }
+                else
+                {
+                    if (ViewBag.Title != "Cart Details")
+                    {
+                    <ul class="navbar-collapse collapse navbar-right">
+                        @Html.Action("CartPartial", "Cart")
+
+                    </ul>
+                    }
+                }
+
+
             </div>
         </div>
     </div>
@@ -44,9 +92,10 @@
                 </div>
 
                 <div class="col-xs-12 col-md-3">
-                    @Html.Action("SidebarPartial", "Pages");
-
-                </div>
+                    <h2>
+	Where we are:</h2>
+<h2>
+	<img alt="" src="/fileman/Uploads/cogc.PNG" style="width: 500px; height: 267px;"></h2></div>
             }
             else
             {
@@ -65,4 +114,5 @@
 
     @RenderSection("scripts", required: false)
 </body>
+
 </html>

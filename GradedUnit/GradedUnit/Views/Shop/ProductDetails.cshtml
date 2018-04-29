@@ -21,7 +21,24 @@
         Quantity Available: @Html.DisplayFor(model => model.Quantity)
         <br />
 
-        
+
+        @if (Model.Quantity == 0)
+        {
+            if (Request.IsAuthenticated)
+            { 
+            <div class="addtocart">
+                <a href="#" class="addtocart">Add to cart</a>
+                <span class="loader">
+                    <img src="~/Content/img/ajax-loader.gif" />
+                </span>
+                <span class="ajaxmsg">The product is out of stock.</span>
+            </div>
+            }
+        }
+        else
+        {
+            if (Request.IsAuthenticated)
+            {
             <div class="addtocart">
                 <a href="#" class="addtocart">Add to cart</a>
                 <span class="loader">
@@ -29,7 +46,10 @@
                 </span>
                 <span class="ajaxmsg">The product has been added to your cart.</span>
             </div>
-        
+            }
+        }
+
+
 
     </div>
 
@@ -61,43 +81,43 @@
 
     <script src="~/Scripts/jquery.fancybox.js"></script>
     <script>
-$(function () {
+        $(function () {
 
-    /*
-    * Fancybox
-    */
+            /*
+            * Fancybox
+            */
 
-    $(".fancybox").fancybox();
+            $(".fancybox").fancybox();
 
-    ////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////
 
-    /*
-    * Add to cart
-    */
+            /*
+            * Add to cart
+            */
 
-    $("a.addtocart").click(function (e) {
-        e.preventDefault();
+            $("a.addtocart").click(function (e) {
+                e.preventDefault();
 
-        $("span.loader").addClass("ib");
+                $("span.loader").addClass("ib");
 
-        var url = "/cart/AddToCartPartial";
+                var url = "/cart/AddToCartPartial";
 
-        $.get(url, { id: @Model.Id }, function (data) {
-            $(".ajaxcart").html(data);
-        }).done(function () {
-            $("span.loader").removeClass("ib");
-            $("span.ajaxmsg").addClass("ib");
-            setTimeout(function () {
-                $("span.ajaxmsg").fadeOut("fast");
-                $("span.ajaxmsg").removeClass("ib");
-            }, 1000);
-            location.reload();
+                $.get(url, { id: @Model.Id }, function (data) {
+                    $(".ajaxcart").html(data);
+                }).done(function () {
+                    $("span.loader").removeClass("ib");
+                    $("span.ajaxmsg").addClass("ib");
+                    setTimeout(function () {
+                        $("span.ajaxmsg").fadeOut("fast");
+                        $("span.ajaxmsg").removeClass("ib");
+                    }, 1000);
+                    setTimeout(location.reload.bind(location), 1000);
+                });
+            });
+
+            ////////////////////////////////////////////////////////
+
         });
-    });
-
-    ////////////////////////////////////////////////////////
-
-});
     </script>
 
 }

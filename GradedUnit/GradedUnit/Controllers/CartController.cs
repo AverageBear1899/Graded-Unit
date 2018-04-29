@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Mvc;
 
@@ -78,61 +80,71 @@ namespace GradedUnit.Controllers
             List<CartVM> cart = Session["cart"] as List<CartVM> ?? new List<CartVM>();
             //init cartVM
             CartVM model = new CartVM();
-            
-            
+
+
             using (Db db = new Db())
             {
+
                 //get product
                 ProductDTO product = db.Products.Find(id);
-                //check if product is in the cart
-                var productInCart = cart.FirstOrDefault(x => x.ProductId == id);
-                //if not, add new
-                if (productInCart == null)
+
+                if (product.Quantity == 0)
                 {
-                    cart.Add(new CartVM()
-                    {
-                        ProductId = product.Id,
-                        ProductName = product.Name,
-                        QuantityOrdered = 1,
-                        Price = product.Price,
-                        Image = product.ImageName
-                        
-                    });
+                    ModelState.AddModelError("", "Out of stock");
                     
                 }
                 else
                 {
-                    //if it is, increment
-                    productInCart.QuantityOrdered++;
+                    //check if product is in the cart
+                    var productInCart = cart.FirstOrDefault(x => x.ProductId == id);
+                    //if not, add new
+                    if (productInCart == null)
+                    {
+                        cart.Add(new CartVM()
+                        {
+                            ProductId = product.Id,
+                            ProductName = product.Name,
+                            QuantityOrdered = 1,
+                            Price = product.Price,
+                            Image = product.ImageName
+
+                        });
+
+                    }
+                    else
+                    {
+                        //if it is, increment
+                        productInCart.QuantityOrdered++;
+                    }
+
+                    product.Quantity = product.Quantity - 1;
+                    db.Entry(product).State = EntityState.Modified;
+                    db.SaveChanges();
+
                 }
+                //get total, qty, price
+                int qty = 0;
+                decimal price = 0m;
 
-                product.Quantity = product.Quantity - 1;
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
+                foreach (var item in cart)
+                {
+                    qty += item.QuantityOrdered;
+                    price += item.QuantityOrdered * item.Price;
+                }
+                model.QuantityOrdered = qty;
+                model.Price = price;
 
+
+                //save cart to session
+                Session["cart"] = cart;
+
+                //return partial view with model
+                return PartialView(model);
             }
-            //get total, qty, price
-            int qty = 0;
-            decimal price = 0m;
-
-            foreach(var item in cart)
-            {
-                qty += item.QuantityOrdered;
-                price += item.QuantityOrdered * item.Price;
-            }
-            model.QuantityOrdered = qty;
-            model.Price = price;
-            
-
-            //save cart to session
-            Session["cart"] = cart;
-            
-            //return partial view with model
-            return PartialView(model);
         }
 
         // GET: /Cart/IncrementProduct
-        public JsonResult IncrementProduct(int productId)
+        public ActionResult IncrementProduct(int productId)
         {
             // Init cart list
             List<CartVM> cart = Session["cart"] as List<CartVM>;
@@ -141,21 +153,31 @@ namespace GradedUnit.Controllers
             {
                 //instance of product class
                 ProductDTO product = db.Products.Find(productId);
+
                 // Get cartVM from list
                 CartVM model = cart.FirstOrDefault(x => x.ProductId == productId);
+                if (product.Quantity == 0)
+                {
+                    ModelState.AddModelError("", "Out of stock");
+                    return Json(JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
 
-                // Increment qty
-                model.QuantityOrdered++;
 
-                // Store needed data
-                var result = new { qty = model.QuantityOrdered, price = model.Price };
+                    // Increment qty
+                    model.QuantityOrdered++;
 
-                //decrease quantity available
-                product.Quantity = product.Quantity - 1;
-                db.Entry(product).State = EntityState.Modified;
-                db.SaveChanges();
-                // Return json with data
-                return Json(result, JsonRequestBehavior.AllowGet);
+                    // Store needed data
+                    var result = new { qty = model.QuantityOrdered, price = model.Price };
+
+                    //decrease quantity available
+                    product.Quantity = product.Quantity - 1;
+                    db.Entry(product).State = EntityState.Modified;
+                    db.SaveChanges();
+                    // Return json with data
+                    return Json(result, JsonRequestBehavior.AllowGet);
+                }
             }
 
         }
@@ -219,5 +241,75 @@ namespace GradedUnit.Controllers
 
             }
         }
+
+        public ActionResult PaypalPartial()
+        {
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+
+            return PartialView(cart);
+        }
+
+        // POST: /Cart/PlaceOrder
+        public void PlaceOrder()
+        {
+            // Get cart list
+            List<CartVM> cart = Session["cart"] as List<CartVM>;
+
+            // Get username
+            string username = User.Identity.Name;
+
+            int orderId = 0;
+
+            using (Db db = new Db())
+            {
+                // Init OrderDTO
+                OrderDTO orderDTO = new OrderDTO();
+
+                // Get user id
+                var q = db.Users.FirstOrDefault(x => x.Username == username);
+                int userId = q.Id;
+
+                // Add to OrderDTO and save
+                orderDTO.UserId = userId;
+                orderDTO.CreatedAt = DateTime.Now;
+
+                db.Orders.Add(orderDTO);
+
+                db.SaveChanges();
+
+                // Get inserted id
+                orderId = orderDTO.OrderId;
+
+                // Init OrderDetailsDTO
+                OrderDetailsDTO orderDetailsDTO = new OrderDetailsDTO();
+
+                // Add to OrderDetailsDTO
+                foreach (var item in cart)
+                {
+                    orderDetailsDTO.OrderId = orderId;
+                    orderDetailsDTO.UserId = userId;
+                    orderDetailsDTO.ProductId = item.ProductId;
+                    orderDetailsDTO.Quantity = item.QuantityOrdered;
+
+                    db.OrderDetails.Add(orderDetailsDTO);
+
+                    db.SaveChanges();
+                }
+            }
+
+            // Email admin
+            //var client = new SmtpClient("mailtrap.io", 2525)
+            //{
+            //    Credentials = new NetworkCredential("21f57cbb94cf88", "e9d7055c69f02d"),
+            //    EnableSsl = true
+            //};
+            //client.Send("admin@example.com", "markjriley1899@gmail.com", "New Order", "You have a new order. Order number " + orderId);
+
+            // Reset session
+            Session["cart"] = null;
+        }
+
     }
+
+
 }
