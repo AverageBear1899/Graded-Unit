@@ -121,6 +121,16 @@ namespace GradedUnit.Controllers
                     db.Entry(product).State = EntityState.Modified;
                     db.SaveChanges();
 
+                    //send email once quantity reaches restock level
+                    if (product.Quantity == 5)
+                    {
+                        var senderClient = new SmtpClient("smtp.gmail.com", 587)
+                        {
+                            Credentials = new NetworkCredential("markriact@gmail.com", "eprbdxwogucwqdic"),
+                            EnableSsl = true
+                        };
+                        senderClient.Send("markiact@gmail.com", "markjriley1899@gmail.com", "Stock Alert", "Hello admin " + product.Name + " is almost out of stock, please log in to your account and submit a re-order");
+                    }
                 }
                 //get total, qty, price
                 int qty = 0;
@@ -175,6 +185,17 @@ namespace GradedUnit.Controllers
                     product.Quantity = product.Quantity - 1;
                     db.Entry(product).State = EntityState.Modified;
                     db.SaveChanges();
+
+                    //send email once quantity reaches restock level
+                    if (product.Quantity == 5)
+                    {
+                        var senderClient = new SmtpClient("smtp.gmail.com", 587)
+                        {
+                            Credentials = new NetworkCredential("markriact@gmail.com", "eprbdxwogucwqdic"),
+                            EnableSsl = true
+                        };
+                        senderClient.Send("markiact@gmail.com", "markjriley1899@gmail.com", "Stock Alert", "Hello admin " + product.Name + " is almost out of stock, please log in to your account and submit a re-order");
+                    }
                     // Return json with data
                     return Json(result, JsonRequestBehavior.AllowGet);
                 }
@@ -269,7 +290,7 @@ namespace GradedUnit.Controllers
                 var q = db.Users.FirstOrDefault(x => x.Username == username);
                 int userId = q.Id;
 
-                // Add to OrderDTO and save
+                //Add to OrderDTO and save
                 orderDTO.UserId = userId;
                 orderDTO.CreatedAt = DateTime.Now;
 
@@ -287,7 +308,7 @@ namespace GradedUnit.Controllers
                 foreach (var item in cart)
                 {
                     orderDetailsDTO.OrderId = orderId;
-                    orderDetailsDTO.UserId = userId;
+                    //orderDetailsDTO.UserId = userId;
                     orderDetailsDTO.ProductId = item.ProductId;
                     orderDetailsDTO.Quantity = item.QuantityOrdered;
 

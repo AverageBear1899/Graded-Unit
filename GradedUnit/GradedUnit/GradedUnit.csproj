@@ -140,6 +140,7 @@
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Controllers\PagesController.cs" />
     <Compile Include="Areas\Admin\Controllers\ShopController.cs" />
+    <Compile Include="Areas\Admin\Models\ViewModels\Shop\OrdersForAdminVM.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\PagesController.cs" />
@@ -147,6 +148,52 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201804300901054_InitialMigration.cs" />
+    <Compile Include="Migrations\201804300901054_InitialMigration.Designer.cs">
+      <DependentUpon>201804300901054_InitialMigration.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300903306_AddFKToOrderTable.cs" />
+    <Compile Include="Migrations\201804300903306_AddFKToOrderTable.Designer.cs">
+      <DependentUpon>201804300903306_AddFKToOrderTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300905072_AddFKToOrderDetailsTable.cs" />
+    <Compile Include="Migrations\201804300905072_AddFKToOrderDetailsTable.Designer.cs">
+      <DependentUpon>201804300905072_AddFKToOrderDetailsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300906134_AddFKToOrderDetailsTable1.cs" />
+    <Compile Include="Migrations\201804300906134_AddFKToOrderDetailsTable1.Designer.cs">
+      <DependentUpon>201804300906134_AddFKToOrderDetailsTable1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300908453_AddFKToOrderDetailsTable11.cs" />
+    <Compile Include="Migrations\201804300908453_AddFKToOrderDetailsTable11.Designer.cs">
+      <DependentUpon>201804300908453_AddFKToOrderDetailsTable11.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300912137_AddFKToOrderDetailsTable2.cs" />
+    <Compile Include="Migrations\201804300912137_AddFKToOrderDetailsTable2.Designer.cs">
+      <DependentUpon>201804300912137_AddFKToOrderDetailsTable2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300913435_AddFKToOrderDetails.cs" />
+    <Compile Include="Migrations\201804300913435_AddFKToOrderDetails.Designer.cs">
+      <DependentUpon>201804300913435_AddFKToOrderDetails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300916113_AddFKToProducts.cs" />
+    <Compile Include="Migrations\201804300916113_AddFKToProducts.Designer.cs">
+      <DependentUpon>201804300916113_AddFKToProducts.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300919468_addTableUserRoles.cs" />
+    <Compile Include="Migrations\201804300919468_addTableUserRoles.Designer.cs">
+      <DependentUpon>201804300919468_addTableUserRoles.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300921472_addTableUserRoles2.cs" />
+    <Compile Include="Migrations\201804300921472_addTableUserRoles2.Designer.cs">
+      <DependentUpon>201804300921472_addTableUserRoles2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300926443_addTableUserRoles21.cs" />
+    <Compile Include="Migrations\201804300926443_addTableUserRoles21.Designer.cs">
+      <DependentUpon>201804300926443_addTableUserRoles21.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\CategoryDTO.cs" />
     <Compile Include="Models\Data\CategoryDTO.cs" />
     <Compile Include="Models\Data\Db.cs" />
     <Compile Include="Models\Data\OrderDetailsDTO.cs" />
@@ -157,7 +204,17 @@
     <Compile Include="Models\Data\SidebarDTO.cs" />
     <Compile Include="Models\Data\UserDTO.cs" />
     <Compile Include="Models\Data\UserRoleDTO.cs" />
+    <Compile Include="Models\Db.cs" />
+    <Compile Include="Models\OrderDetailsDTO.cs" />
+    <Compile Include="Models\OrderDTO.cs" />
+    <Compile Include="Models\PageDTO.cs" />
+    <Compile Include="Models\ProductDTO.cs" />
+    <Compile Include="Models\RoleDTO.cs" />
+    <Compile Include="Models\SidebarDTO.cs" />
+    <Compile Include="Models\UserDTO.cs" />
+    <Compile Include="Models\UserRoleDTO.cs" />
     <Compile Include="Models\ViewModels\Account\LoginUserVM.cs" />
+    <Compile Include="Models\ViewModels\Account\OrdersForUserVM.cs" />
     <Compile Include="Models\ViewModels\Account\UserNavPartialVM.cs" />
     <Compile Include="Models\ViewModels\Account\UserProfileVM.cs" />
     <Compile Include="Models\ViewModels\Account\UserVM.cs" />
@@ -165,14 +222,13 @@
     <Compile Include="Models\ViewModels\Pages\PageVM.cs" />
     <Compile Include="Models\ViewModels\Pages\SidebarVM.cs" />
     <Compile Include="Models\ViewModels\Shop\CategoryVM.cs" />
+    <Compile Include="Models\ViewModels\Shop\OrderVM.cs" />
     <Compile Include="Models\ViewModels\Shop\ProductVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\GradedUnit.mdf" />
-    <Content Include="App_Data\GradedUnit_log.ldf">
-      <DependentUpon>GradedUnit.mdf</DependentUpon>
-    </Content>
+    <Content Include="Content\bootstrap-cyborg.css" />
+    <Content Include="Content\bootstrap-ubuntu.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\fancybox\blank.gif" />
@@ -216,6 +272,7 @@
     <Content Include="Areas\Admin\Views\Shop\AddProduct.cshtml" />
     <Content Include="Areas\Admin\Views\Shop\Products.cshtml" />
     <Content Include="Areas\Admin\Views\Shop\EditProduct.cshtml" />
+    <Content Include="Areas\Admin\Views\Shop\Orders.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ckeditor\ckeditor_source.js" />
     <Content Include="Scripts\ckeditor\config.js" />
@@ -605,9 +662,10 @@
     <Content Include="Views\Account\UserNavPartial.cshtml" />
     <Content Include="Views\Account\UserProfile.cshtml" />
     <Content Include="Views\Cart\PaypalPartial.cshtml" />
+    <Content Include="Views\Account\Orders.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Areas\Admin\Models\" />
+    <Folder Include="App_Data\" />
     <Folder Include="fileman\" />
   </ItemGroup>
   <ItemGroup>
@@ -617,6 +675,41 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations\201804300901054_InitialMigration.resx">
+      <DependentUpon>201804300901054_InitialMigration.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300903306_AddFKToOrderTable.resx">
+      <DependentUpon>201804300903306_AddFKToOrderTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300905072_AddFKToOrderDetailsTable.resx">
+      <DependentUpon>201804300905072_AddFKToOrderDetailsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300906134_AddFKToOrderDetailsTable1.resx">
+      <DependentUpon>201804300906134_AddFKToOrderDetailsTable1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300908453_AddFKToOrderDetailsTable11.resx">
+      <DependentUpon>201804300908453_AddFKToOrderDetailsTable11.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300912137_AddFKToOrderDetailsTable2.resx">
+      <DependentUpon>201804300912137_AddFKToOrderDetailsTable2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300913435_AddFKToOrderDetails.resx">
+      <DependentUpon>201804300913435_AddFKToOrderDetails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300916113_AddFKToProducts.resx">
+      <DependentUpon>201804300916113_AddFKToProducts.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300919468_addTableUserRoles.resx">
+      <DependentUpon>201804300919468_addTableUserRoles.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300921472_addTableUserRoles2.resx">
+      <DependentUpon>201804300921472_addTableUserRoles2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300926443_addTableUserRoles21.resx">
+      <DependentUpon>201804300926443_addTableUserRoles21.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

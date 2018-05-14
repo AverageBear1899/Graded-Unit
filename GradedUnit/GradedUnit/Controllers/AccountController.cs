@@ -1,5 +1,6 @@
 ﻿using GradedUnit.Models.Data;
 using GradedUnit.Models.ViewModels.Account;
+using GradedUnit.Models.ViewModels.Shop;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,12 +15,17 @@ namespace GradedUnit.Controllers
     public class AccountController : Controller
     {
         // GET: Account
+        ///
         public ActionResult Index()
         {
             return Redirect("~/account/login");
         }
 
         // GET: /account/login
+        /// <summary>
+        /// Returns view that allows user to enter login details
+        /// </summary>
+        /// <returns>Returns view</returns>
         [HttpGet]
         public ActionResult Login()
         {
@@ -34,11 +40,16 @@ namespace GradedUnit.Controllers
         }
 
         // POST: /account/login
+        /// <summary>
+        /// Processes the information given by the user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Login(LoginUserVM model)
         {
             //check model state
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -48,12 +59,12 @@ namespace GradedUnit.Controllers
 
             using (Db db = new Db())
             {
-                if (db.Users.Any(x=> x.Username.Equals(model.Username) && x.Password.Equals(model.Password)))
+                if (db.Users.Any(x => x.Username.Equals(model.Username) && x.Password.Equals(model.Password)))
                 {
                     isValid = true;
                 }
             }
-            if (! isValid)
+            if (!isValid)
             {
                 ModelState.AddModelError("", "Invalid username or password!");
                 return View(model);
@@ -67,6 +78,10 @@ namespace GradedUnit.Controllers
         }
 
         // GET: /account/create-account
+        /// <summary>
+        /// Returns view that allows user to enter desired account details
+        /// </summary>
+        /// <returns>Returns View "CreateAccount"</returns>
         [ActionName("create-account")]
         [HttpGet]
         public ActionResult CreateAccount()
@@ -75,6 +90,11 @@ namespace GradedUnit.Controllers
         }
 
         // POST: /account/create-account
+        /// <summary>
+        /// Processes the information given by the user to create the account
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Returns Redirect("~/account/login")</returns>
         [ActionName("create-account")]
         [HttpPost]
         public ActionResult CreateAccount(UserVM model)
@@ -93,7 +113,7 @@ namespace GradedUnit.Controllers
             using (Db db = new Db())
             {
                 //check username is unique
-                if(db.Users.Any(x=> x.Username.Equals(model.Username)))
+                if (db.Users.Any(x => x.Username.Equals(model.Username)))
                 {
                     ModelState.AddModelError("", "Username " + model.Username + " is taken!");
                     model.Username = "";
@@ -129,23 +149,33 @@ namespace GradedUnit.Controllers
             TempData["SM"] = "You are now registered and can now log in.";
 
             //Email user
-            var client = new SmtpClient("smtp.mailtrap.io", 2525)
+            var senderClient = new SmtpClient("smtp.gmail.com", 587)
             {
-                Credentials = new NetworkCredential("cb71214d698717", "de24b8953b0e53"),
+                Credentials = new NetworkCredential("markriact@gmail.com", "eprbdxwogucwqdic"),
                 EnableSsl = true
             };
-            client.Send("admin@example.com", model.EmailAddress, "New Account", "Hello " + model.FirstName + " You have created an account with the TShirt Company, you can now place an order with us.");
+            senderClient.Send("markiact@gmail.com", model.EmailAddress, "You have created a new Account", "Hello " + model.FirstName + " " + model.LastName + " You have created an account with the TShirt Company, you can now place an order with us. Happy shopping!");
             //redirect
             return Redirect("~/account/login");
         }
 
         // GET: /account/Logout
+        [Authorize]
+        /// <summary>
+        /// Provides user the ability to logout of their account
+        /// </summary>
+        /// <returns>returns Redirect("~/account/login")</returns>
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
             return Redirect("~/account/login");
         }
 
+        [Authorize]
+        /// <summary>
+        /// Takes the users details to display a link to their account details using their first and last name
+        /// </summary>
+        /// <returns>Returns PartialView(model)</returns>
         public ActionResult UserNavPartial()
         {
             //get username
@@ -164,13 +194,18 @@ namespace GradedUnit.Controllers
                     LastName = dto.LastName
                 };
             }
-                //return partial view with model
-                return PartialView(model);
+            //return partial view with model
+            return PartialView(model);
         }
 
         // GET: /account/user-profile
+        /// <summary>
+        /// Takes the users details from the database to build a view with their details filled in
+        /// </summary>
+        /// <returns>Returns View("UserProfile", model)</returns>
         [HttpGet]
         [ActionName("user-profile")]
+        [Authorize]
         public ActionResult UserProfile()
         {
             // Get username
@@ -193,8 +228,14 @@ namespace GradedUnit.Controllers
         }
 
         // POST: /account/user-profile
+        /// <summary>
+        /// Allows the user to update the fields of their account and saves the changes to the database
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Returns Redirect("~/account/user-profile")</returns>
         [HttpPost]
         [ActionName("user-profile")]
+        [Authorize]
         public ActionResult UserProfile(UserProfileVM model)
         {
             // Check model state
@@ -249,6 +290,81 @@ namespace GradedUnit.Controllers
 
             // Redirect
             return Redirect("~/account/user-profile");
+        }
+        /// <summary>
+        /// Alllows the user to view their orders
+        /// </summary>
+        /// <returns>return View(ordersForUser)</returns>
+        // GET: /account/orders
+        [Authorize(Roles = "User")]
+        public ActionResult Orders()
+        {
+            //init list of ordersforuservm
+            List<OrdersForUserVM> ordersForUser = new List<OrdersForUserVM>();
+
+            using (Db db = new Db())
+            {
+                //get userid
+                UserDTO user = db.Users.Where(x => x.Username == User.Identity.Name).FirstOrDefault();
+                int userId = user.Id;
+                //init list of orderVM
+                List<OrderVM> orders = db.Orders.Where(x => x.UserId == userId).ToArray().Select(x => new OrderVM(x)).ToList();
+
+                //loop through list of orderVM
+                foreach(var order in orders)
+                {
+                    //init products dict
+                    Dictionary<string, int> productsAndQty = new Dictionary<string, int>();
+                    //declare total
+                    decimal total = 0m;
+                    //init list of orderdetailsdto
+                    List<OrderDetailsDTO> orderDetailsDTO = db.OrderDetails.Where(x => x.OrderId == order.OrderId).ToList();
+                    //loop through
+                    foreach (var orderDetails in orderDetailsDTO)
+                    {
+                        //get product
+                        ProductDTO product = db.Products.Where(x => x.Id == orderDetails.ProductId).FirstOrDefault();
+                        //get product price
+                        decimal price = product.Price;
+                        //get product name
+                        string productName = product.Name;
+                        //add to products dict
+                        productsAndQty.Add(productName, orderDetails.Quantity);
+                        //get total
+                        total += orderDetails.Quantity * price;
+                    }
+                    //add to OrdersForUserVM list
+                    ordersForUser.Add(new OrdersForUserVM()
+                    {
+                        OrderNumber = order.OrderId,
+                        Total = total,
+                        ProductsAndQty = productsAndQty,
+                        CreatedAt = order.CreatedAt
+                    });
+                }
+            }
+                return View(ordersForUser);
+        }
+        [Authorize(Roles="User")]
+        /// <summary>
+        /// Allows the user to cancel their order
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        //GET : /account/DeleteOrder/id
+        public ActionResult DeleteOrder(int id)
+        {
+            //delete product from db
+            using (Db db = new Db())
+            {
+                OrderDTO dto = db.Orders.Find(id);
+                db.Orders.Remove(dto);
+
+                db.SaveChanges();
+            }
+
+            //redirect
+            return RedirectToAction("Orders");
         }
 
     }

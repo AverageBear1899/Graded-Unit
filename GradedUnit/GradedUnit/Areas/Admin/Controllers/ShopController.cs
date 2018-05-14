@@ -1,4 +1,5 @@
-﻿using GradedUnit.Models.Data;
+﻿using GradedUnit.Areas.Admin.Models.ViewModels.Shop;
+using GradedUnit.Models.Data;
 using GradedUnit.Models.ViewModels.Shop;
 using PagedList;
 using System;
@@ -11,6 +12,7 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Areas.Admin.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
         // GET: Admin/Shop/Categories
@@ -38,7 +40,7 @@ namespace GradedUnit.Areas.Admin.Controllers
             {
                 //check that category is unique
                 if (db.Catagories.Any(x => x.Name == catName))
-                
+
                     return "titletaken";
 
                 //init dto
@@ -219,13 +221,13 @@ namespace GradedUnit.Areas.Admin.Controllers
             {
                 //get file ext
                 string ext = file.ContentType.ToLower();
-            //verify ext
-            if (    ext != "image/jpg" &&
-                    ext != "image/jpeg" &&
-                    ext != "image/pjpeg" &&
-                    ext != "image/gif" &&
-                    ext != "image/x-png" &&
-                    ext != "image/png")
+                //verify ext
+                if (ext != "image/jpg" &&
+                        ext != "image/jpeg" &&
+                        ext != "image/pjpeg" &&
+                        ext != "image/gif" &&
+                        ext != "image/x-png" &&
+                        ext != "image/png")
                 {
                     using (Db db = new Db())
                     {
@@ -314,7 +316,7 @@ namespace GradedUnit.Areas.Admin.Controllers
                 //get all gallery images
                 model.GalleryImages = Directory.EnumerateFiles(Server.MapPath("~/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
                                                 .Select(fn => Path.GetFileName(fn));
-        }
+            }
             //return view with model
             return View(model);
         }
@@ -400,7 +402,7 @@ namespace GradedUnit.Areas.Admin.Controllers
                 DirectoryInfo di1 = new DirectoryInfo(pathString1);
                 DirectoryInfo di2 = new DirectoryInfo(pathString2);
 
-                foreach(FileInfo file2 in di1.GetFiles())
+                foreach (FileInfo file2 in di1.GetFiles())
                     file2.Delete();
 
                 foreach (FileInfo file3 in di2.GetFiles())
@@ -457,11 +459,12 @@ namespace GradedUnit.Areas.Admin.Controllers
 
         [HttpPost]
         //POST : Admin/Shop/SaveGalleryImages
+
         public void SaveGalleryImages(int id)
         {
             //loop through files
             foreach (string fileName in Request.Files)
-                {
+            {
                 //init file
                 HttpPostedFileBase file = Request.Files[fileName];
                 //check its not null
@@ -481,22 +484,95 @@ namespace GradedUnit.Areas.Admin.Controllers
                     img.Resize(200, 200);
                     img.Save(path2);
                 }
-                }
-            
+            }
+
         }
         [HttpPost]
-        //POST : Admin/Shop/DeleteImage
         public void DeleteImage(int id, string imageName)
         {
-            string fullpath1 = Request.MapPath("~/Images/Uploads/Products" + id.ToString() + "/Gallery/" + imageName);
-            string fullpath2 = Request.MapPath("~/Images/Uploads/Products" + id.ToString() + "/Gallery/Thumbs/" + imageName);
+            string fullPath1 = Request.MapPath("~/Images/Uploads/Products/" + id.ToString() + "/Gallery/" + imageName);
+            string fullPath2 = Request.MapPath("~/Images/Uploads/Products/" + id.ToString() + "/Gallery/Thumbs/" + imageName);
 
-            if (System.IO.File.Exists(fullpath1))
-                System.IO.File.Delete(fullpath1);
+            if (System.IO.File.Exists(fullPath1))
+                System.IO.File.Delete(fullPath1);
 
-            if (System.IO.File.Exists(fullpath2))
-                System.IO.File.Delete(fullpath2);
+            if (System.IO.File.Exists(fullPath2))
+                System.IO.File.Delete(fullPath2);
+        }
+
+        //GET : Admin/Shop/Orders
+        public ActionResult Orders()
+        {
+
+            //init list of Orders
+            List<OrdersForAdminVM> ordersForAdmin = new List<OrdersForAdminVM>();
+
+            using (Db db = new Db())
+            {
+                //init list of orderVMs
+                List<OrderVM> orders = db.Orders.ToArray().Select(x => new OrderVM(x)).ToList();
+                //loop through list of OrderVMS
+
+                foreach (var order in orders)
+                {
+                    //init product dict
+                    Dictionary<string, int> productsAndQty = new Dictionary<string, int>();
+                    //declare total
+                    decimal total = 0m;
+                    //init list of OrderDetailsDTO
+                    List<OrderDetailsDTO> orderDetailsList = db.OrderDetails.Where(x => x.OrderId == order.OrderId).ToList();
+                    //get username
+                    UserDTO user = db.Users.Where(x => x.Id == order.UserId).FirstOrDefault();
+                    string username = user.Username;
+                    //loop through list of OrderDetailsDTO
+                    foreach (var orderDetails in orderDetailsList)
+                    {
+                        //get product
+                        ProductDTO product = db.Products.Where(x => x.Id == orderDetails.ProductId).FirstOrDefault();
+                        //get product price
+                        decimal price = product.Price;
+                        //get product name
+                        string productName = product.Name;
+                        //add to product dict
+                        productsAndQty.Add(productName, orderDetails.Quantity);
+
+                        //get total
+                        total += orderDetails.Quantity * price;
+
+                    }
+
+                    //add to ordersForAdminVM list
+                    ordersForAdmin.Add(new OrdersForAdminVM()
+                    {
+                        OrderNumber = order.OrderId,
+                        Username = username,
+                        Total = total,
+                        ProductsAndQty = productsAndQty,
+                        CreatedAt = order.CreatedAt
+                    });
+
+                }
+            }
+                return View(ordersForAdmin);
+        }
+
+        //GET : Admin/Shop/DeleteOrder/id
+        public ActionResult DeleteOrder(int id)
+        {
+            //delete product from db
+            using (Db db = new Db())
+            {
+                OrderDTO dto = db.Orders.Find(id);
+                db.Orders.Remove(dto);
+
+                db.SaveChanges();
+            }
+            
+            
+
+            //redirect
+            return RedirectToAction("Orders");
         }
     }
+    }
 
-}

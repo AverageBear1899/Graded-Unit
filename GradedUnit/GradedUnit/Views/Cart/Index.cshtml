@@ -26,9 +26,7 @@ else
                 <th>
                     Name
                 </th>
-                <th>
-                    Quantity
-                </th>
+                
                 <th>
                     Price
                 </th>
@@ -37,6 +35,9 @@ else
                 </th>
                 <th>
 
+                </th>
+                <th>
+                    Quantity
                 </th>
                 <th>
                     Total
@@ -52,14 +53,15 @@ else
                     <td>
                         @Html.DisplayFor(modelItem => item.ProductName)
                     </td>
-                    <td class="qty@(item.ProductId)">
-                        @Html.DisplayFor(modelItem => item.QuantityOrdered)
-                    </td>
+                    
                     <td>
                         £@Html.DisplayFor(modelItem => item.Price)
                     </td>
                     <td>
                         <img src="/Images/Uploads/Products/@item.ProductId/Thumbs/@item.Image" />
+                    </td>
+                    <td class="qty@(item.ProductId)">
+                        @Html.DisplayFor(modelItem => item.QuantityOrdered)
                     </td>
                     <td>
 

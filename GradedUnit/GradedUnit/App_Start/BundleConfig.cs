@@ -27,7 +27,7 @@ namespace GradedUnit
                       "~/Scripts/respond.js"));
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
+                      "~/Content/bootstrap-ubuntu.css",
                       "~/Content/Site.css"));
         }
     }

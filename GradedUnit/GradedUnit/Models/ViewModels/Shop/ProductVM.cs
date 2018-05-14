@@ -1,4 +1,5 @@
-﻿using GradedUnit.Models.Data;
+﻿using GradedUnit.Models;
+using GradedUnit.Models.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
