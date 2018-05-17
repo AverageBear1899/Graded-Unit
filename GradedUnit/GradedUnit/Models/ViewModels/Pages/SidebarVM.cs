@@ -7,6 +7,9 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Models.ViewModels.Pages
 {
+    /// <summary>
+    /// View model for the sidebar with attributes to build the sidebars on pages that have it
+    /// </summary>
     public class SidebarVM
     {
         public SidebarVM()

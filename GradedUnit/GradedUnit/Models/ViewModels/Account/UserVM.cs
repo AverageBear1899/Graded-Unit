@@ -7,6 +7,9 @@ using System.Web;
 
 namespace GradedUnit.Models.ViewModels.Account
 {
+    /// <summary>
+    /// View model with attributes and constructors for the user information 
+    /// </summary>
     public class UserVM
     {
         public UserVM()

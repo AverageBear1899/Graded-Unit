@@ -6,6 +6,9 @@ using System.Web;
 
 namespace GradedUnit.Models.ViewModels.Shop
 {
+    /// <summary>
+    /// View model with attributes and constructors for the categories that have been created
+    /// </summary>
     public class CategoryVM
     {
         public CategoryVM()

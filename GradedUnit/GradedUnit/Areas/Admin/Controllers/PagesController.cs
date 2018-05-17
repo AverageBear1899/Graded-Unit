@@ -12,6 +12,10 @@ namespace GradedUnit.Areas.Admin.Controllers
 
     public class PagesController : Controller
     {
+        /// <summary>
+        /// Returns a list of pages on the website
+        /// </summary>
+        /// <returns>Pages list view</returns>
         // GET: Admin/Pages
         public ActionResult Index()
         {
@@ -26,13 +30,22 @@ namespace GradedUnit.Areas.Admin.Controllers
             //Return view
             return View(pagesList);
         }
+        /// <summary>
+        /// Allows an admin to create a new page on the website
+        /// </summary>
+        /// <returns>Takes user to the add page view</returns>
         //GET : Admin/Pages/AddPage
         [HttpGet]
         public ActionResult AddPage()
         {
             return View();
         }
-        //POST  : Admin/Pges/AddPage
+        /// <summary>
+        /// Post method for a user to create new pages on the website
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Returns user to the add page view or displays error that the page exists</returns>
+        //POST  : Admin/Pages/AddPage
         [HttpPost]
         public ActionResult AddPage(PageVM model)
         {
@@ -80,7 +93,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             //Redirect
             return RedirectToAction("AddPage");
         }
-
+        /// <summary>
+        /// Allows an admin to edit a page on the website
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Takes user to the edit page view or displays that the page already exists</returns>
         //GET : Admin/Pages/EditPage/id
         [HttpGet]
         public ActionResult EditPage(int id)
@@ -104,7 +121,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return view with model
             return View(model);
         }
-
+        /// <summary>
+        /// Post method for editing a page
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Takes user to the edit page view or displays error that page cant be edited</returns>
         //POST : Admin/Pages/EditPage/id
         [HttpPost]
         public ActionResult EditPage(PageVM model)
@@ -155,7 +176,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             //redirect
             return RedirectToAction("EditPage");
         }
-
+        /// <summary>
+        /// Allows user to view the details of a page
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Takes user to the page details view</returns>
         //GET : Admin/Pages/PageDetails/id
         public ActionResult PageDetails(int id)
         {
@@ -179,6 +204,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return view with model
             return View(model);
         }
+        /// <summary>
+        /// Allows an admin to delete a page from the database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns user to the index page once a page has been deleted</returns>
         //GET : Admin/Pages/DeletePage/id
         public ActionResult DeletePage(int id)
         {
@@ -195,6 +225,10 @@ namespace GradedUnit.Areas.Admin.Controllers
             }
             return RedirectToAction("Index");
         }
+        /// <summary>
+        /// Allows an admin to change the order in which the pages will be displayed
+        /// </summary>
+        /// <param name="id"></param>
         //POST : Admin/Pages/ReorderPages
         [HttpPost]
         public void ReorderPages(int[] id)
@@ -217,6 +251,10 @@ namespace GradedUnit.Areas.Admin.Controllers
             }
 
         }
+        /// <summary>
+        /// Allows admin to edit the content of the sidebar on a page
+        /// </summary>
+        /// <returns>Takes user to the edit sidebar view</returns>
         //GET : Admin/Pages/EditSidebar
         [HttpGet]
         public ActionResult EditSidebar()
@@ -234,6 +272,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return view with model
             return View(model);
         }
+        /// <summary>
+        /// Post method for editing the sidebar on a page
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Redirects to the edit sidebar page once the sidebar has been edited</returns>
         //POST : Admin/Pages/EditSidebar
         [HttpPost]
         public ActionResult EditSidebar(SidebarVM model)

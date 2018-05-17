@@ -47,10 +47,13 @@ else
         <td>
             £@Html.DisplayFor(modelItem => item.Total)
         </td>
+        @if (item.CreatedAt.AddDays(1) < DateTime.Now)
+        {
         <td>
+         
             @Html.ActionLink("Cancel Order", "DeleteOrder", new { id = item.OrderNumber })
         </td>
-        
+        }
     </tr>
 }
 

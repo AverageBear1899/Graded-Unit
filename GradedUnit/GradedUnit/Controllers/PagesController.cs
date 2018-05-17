@@ -11,6 +11,11 @@ namespace GradedUnit.Controllers
     public class PagesController : Controller
     {
         // GET: Index/{page}
+        /// <summary>
+        /// Displays the page with a number of different additions depending on what was set up when an admin created the page
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns>Returns the page with or without the sidebar depending on what the admin has setup</returns>
         public ActionResult Index(string page = "")
         {
                 //get/set page slug
@@ -45,10 +50,13 @@ namespace GradedUnit.Controllers
             }
                 //init model
                 model = new PageVM(dto);
-                //return view with mode
+                //return view with model
                 return View(model);
         }
-
+        /// <summary>
+        /// Partial view for the pages menu
+        /// </summary>
+        /// <returns>Returns the pages menu with the list of pages</returns>
         public ActionResult PagesMenuPartial()
         {
             //declare a list of pagevm
@@ -61,7 +69,10 @@ namespace GradedUnit.Controllers
             //return partial view with list
             return PartialView(pageVMList);
         }
-
+        /// <summary>
+        /// Partial view for the sidebar that is displayed on some pages
+        /// </summary>
+        /// <returns>Returns the sidebar partial view</returns>
         public ActionResult SidebarPartial()
         {
             //declare model

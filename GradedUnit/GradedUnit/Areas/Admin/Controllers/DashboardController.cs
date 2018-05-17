@@ -9,6 +9,10 @@ namespace GradedUnit.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class DashboardController : Controller
     {
+        /// <summary>
+        /// Returns view for admin dashboard
+        /// </summary>
+        /// <returns>Admin dashboard view</returns>
         // GET: Admin/Dashboard
         public ActionResult Index()
         {

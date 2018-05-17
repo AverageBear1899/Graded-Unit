@@ -3,6 +3,7 @@ using GradedUnit.Models.ViewModels.Account;
 using GradedUnit.Models.ViewModels.Shop;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -15,7 +16,6 @@ namespace GradedUnit.Controllers
     public class AccountController : Controller
     {
         // GET: Account
-        ///
         public ActionResult Index()
         {
             return Redirect("~/account/login");
@@ -25,7 +25,7 @@ namespace GradedUnit.Controllers
         /// <summary>
         /// Returns view that allows user to enter login details
         /// </summary>
-        /// <returns>Returns view</returns>
+        /// <returns>Returns the login view</returns>
         [HttpGet]
         public ActionResult Login()
         {
@@ -44,7 +44,7 @@ namespace GradedUnit.Controllers
         /// Processes the information given by the user
         /// </summary>
         /// <param name="model"></param>
-        /// <returns></returns>
+        /// <returns>Returns the login view or displays an error message that the login was invalid</returns>
         [HttpPost]
         public ActionResult Login(LoginUserVM model)
         {
@@ -79,9 +79,9 @@ namespace GradedUnit.Controllers
 
         // GET: /account/create-account
         /// <summary>
-        /// Returns view that allows user to enter desired account details
+        /// Allows user to enter desired account details
         /// </summary>
-        /// <returns>Returns View "CreateAccount"</returns>
+        /// <returns>Returns the create account view</returns>
         [ActionName("create-account")]
         [HttpGet]
         public ActionResult CreateAccount()
@@ -94,7 +94,7 @@ namespace GradedUnit.Controllers
         /// Processes the information given by the user to create the account
         /// </summary>
         /// <param name="model"></param>
-        /// <returns>Returns Redirect("~/account/login")</returns>
+        /// <returns>Redirects user to the login page or displays error message that the account creation failed</returns>
         [ActionName("create-account")]
         [HttpPost]
         public ActionResult CreateAccount(UserVM model)
@@ -145,7 +145,7 @@ namespace GradedUnit.Controllers
                 db.SaveChanges();
 
             }
-            //create a tempdata message
+            //create a  message
             TempData["SM"] = "You are now registered and can now log in.";
 
             //Email user
@@ -164,7 +164,7 @@ namespace GradedUnit.Controllers
         /// <summary>
         /// Provides user the ability to logout of their account
         /// </summary>
-        /// <returns>returns Redirect("~/account/login")</returns>
+        /// <returns>Redirects the user to the login page</returns>
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
@@ -175,7 +175,7 @@ namespace GradedUnit.Controllers
         /// <summary>
         /// Takes the users details to display a link to their account details using their first and last name
         /// </summary>
-        /// <returns>Returns PartialView(model)</returns>
+        /// <returns>Returns a partial view for the user navigation bar</returns>
         public ActionResult UserNavPartial()
         {
             //get username
@@ -202,7 +202,7 @@ namespace GradedUnit.Controllers
         /// <summary>
         /// Takes the users details from the database to build a view with their details filled in
         /// </summary>
-        /// <returns>Returns View("UserProfile", model)</returns>
+        /// <returns>Takes the user to their own profile</returns>
         [HttpGet]
         [ActionName("user-profile")]
         [Authorize]
@@ -232,7 +232,7 @@ namespace GradedUnit.Controllers
         /// Allows the user to update the fields of their account and saves the changes to the database
         /// </summary>
         /// <param name="model"></param>
-        /// <returns>Returns Redirect("~/account/user-profile")</returns>
+        /// <returns>Returns the user to their profile or displays an error stating their desired changes haven't been made</returns>
         [HttpPost]
         [ActionName("user-profile")]
         [Authorize]
@@ -294,7 +294,7 @@ namespace GradedUnit.Controllers
         /// <summary>
         /// Alllows the user to view their orders
         /// </summary>
-        /// <returns>return View(ordersForUser)</returns>
+        /// <returns>Takes the user to their orders page</returns>
         // GET: /account/orders
         [Authorize(Roles = "User")]
         public ActionResult Orders()
@@ -350,7 +350,7 @@ namespace GradedUnit.Controllers
         /// Allows the user to cancel their order
         /// </summary>
         /// <param name="id"></param>
-        /// <returns></returns>
+        /// <returns>Returns the user to their orders page or displays an error that they cannot cancel their order</returns>
         //GET : /account/DeleteOrder/id
         public ActionResult DeleteOrder(int id)
         {
@@ -358,14 +358,22 @@ namespace GradedUnit.Controllers
             using (Db db = new Db())
             {
                 OrderDTO dto = db.Orders.Find(id);
-                db.Orders.Remove(dto);
 
-                db.SaveChanges();
+                if (dto.CreatedAt.AddDays(1) < DateTime.Now)
+                {
+                    db.Orders.Remove(dto);
+                    db.SaveChanges();
+                }
+                else
+                {
+                    ModelState.AddModelError("", "You can only cancel your orders on the day they are placed");
+                }
+                //redirect
+                return RedirectToAction("Orders");
             }
+        }
 
-            //redirect
-            return RedirectToAction("Orders");
+            
         }
 
     }
-}

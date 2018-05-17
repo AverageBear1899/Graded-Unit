@@ -5,6 +5,9 @@ using System.Web;
 
 namespace GradedUnit.Models.ViewModels.Cart
 {
+    /// <summary>
+    /// View model with attributes for the cart
+    /// </summary>
     public class CartVM
     {
         public int ProductId { get; set; }

@@ -9,6 +9,9 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Models.ViewModels.Shop
 {
+    /// <summary>
+    /// View model with attributes and constructors for the products pages
+    /// </summary>
     public class ProductVM
     {
         public ProductVM()

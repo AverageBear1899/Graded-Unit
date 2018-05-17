@@ -12,11 +12,18 @@ namespace GradedUnit.Controllers
     public class ShopController : Controller
     {
         // GET: Shop
+        /// <summary>
+        /// Index controller
+        /// </summary>
+        /// <returns>Redirects user to the website index</returns>
         public ActionResult Index()
         {
             return RedirectToAction("Index", "Pages");
         }
-
+        /// <summary>
+        /// Displays a list of the categories of items available
+        /// </summary>
+        /// <returns>Returns a partial view of the categories on the left side of the page</returns>
         public ActionResult CategoryMenuPartial()
         {
             //declare list of categoryVM
@@ -30,6 +37,11 @@ namespace GradedUnit.Controllers
             //return partial with list
             return PartialView(categoryVMList);
         }
+        /// <summary>
+        /// Takes the user to the product page based on the category they have chosen
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Returns the product list the user has chosen</returns>
         //GET: Shop/category/name
         public ActionResult Category(string name)
         {
@@ -51,7 +63,11 @@ namespace GradedUnit.Controllers
             //return view with list
             return View(productVMList);
         }
-
+        /// <summary>
+        /// Displays the product details of a selected products
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>Takes the user to the product details page depending on the choice</returns>
         // GET: Shop/product-details/name
         [ActionName("product-details")]
     public ActionResult ProductDetails(string name)

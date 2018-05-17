@@ -5,8 +5,12 @@ using System.Web;
 
 namespace GradedUnit.Areas.Admin.Models.ViewModels.Shop
 {
+    /// <summary>
+    /// View model for the OrdersForAdmin page
+    /// </summary>
     public class OrdersForAdminVM
     {
+        
         public int OrderNumber { get; set; }
         public string Username { get; set; }
         public decimal Total { get; set; }

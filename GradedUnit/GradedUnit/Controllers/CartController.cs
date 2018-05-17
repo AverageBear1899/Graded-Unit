@@ -13,6 +13,10 @@ namespace GradedUnit.Controllers
 {
     public class CartController : Controller
     {
+        /// <summary>
+        /// Shows when an item is or isnt in the cart
+        /// </summary>
+        /// <returns>returns message that the cart is empty or it returns the cart with the items in it</returns>
         // GET: Cart
         public ActionResult Index()
         {
@@ -36,7 +40,10 @@ namespace GradedUnit.Controllers
             //return view with list
             return View(cart);
         }
-
+        /// <summary>
+        /// Partial view for the cart
+        /// </summary>
+        /// <returns>Returns a partial view with the items in the cart and their prices</returns>
         public ActionResult CartPartial()
         {
             //init cartVM
@@ -73,7 +80,11 @@ namespace GradedUnit.Controllers
             //return view with model
             return PartialView(model);
         }
-
+        /// <summary>
+        /// Partial view for the add to cart action
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns an error message if the product is out of stock or returns the cart view</returns>
         public ActionResult AddToCartPartial(int id)
         {
             //init cartVM list
@@ -152,7 +163,11 @@ namespace GradedUnit.Controllers
                 return PartialView(model);
             }
         }
-
+        /// <summary>
+        /// Method for the increment product button
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns>Returns a behavior request or shows an error if the item is out of stock</returns>
         // GET: /Cart/IncrementProduct
         public ActionResult IncrementProduct(int productId)
         {
@@ -202,7 +217,11 @@ namespace GradedUnit.Controllers
             }
 
         }
-
+        /// <summary>
+        /// Method for the decrement product button
+        /// </summary>
+        /// <param name="productId"></param>
+        /// <returns>Returns a json behavior request</returns>
         // GET: /Cart/DecrementProduct
         public ActionResult DecrementProduct(int productId)
         {
@@ -238,6 +257,10 @@ namespace GradedUnit.Controllers
 
             }
         }
+        /// <summary>
+        /// Method for the remove product button
+        /// </summary>
+        /// <param name="productId"></param>
         // GET: /Cart/RemoveProduct
         public void RemoveProduct(int productId)
         {
@@ -262,14 +285,19 @@ namespace GradedUnit.Controllers
 
             }
         }
-
+        /// <summary>
+        /// Partial view for the paypal functionality 
+        /// </summary>
+        /// <returns>Returns a partial view for papal</returns>
         public ActionResult PaypalPartial()
         {
             List<CartVM> cart = Session["cart"] as List<CartVM>;
 
             return PartialView(cart);
         }
-
+        /// <summary>
+        /// Allows the user to place their order
+        /// </summary>
         // POST: /Cart/PlaceOrder
         public void PlaceOrder()
         {
@@ -318,13 +346,7 @@ namespace GradedUnit.Controllers
                 }
             }
 
-            // Email admin
-            //var client = new SmtpClient("mailtrap.io", 2525)
-            //{
-            //    Credentials = new NetworkCredential("21f57cbb94cf88", "e9d7055c69f02d"),
-            //    EnableSsl = true
-            //};
-            //client.Send("admin@example.com", "markjriley1899@gmail.com", "New Order", "You have a new order. Order number " + orderId);
+            
 
             // Reset session
             Session["cart"] = null;

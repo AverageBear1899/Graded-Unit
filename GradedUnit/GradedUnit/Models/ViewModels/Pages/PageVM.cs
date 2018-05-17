@@ -8,6 +8,9 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Models.ViewModels.Pages
 {
+    /// <summary>
+    /// View model with attributes and constructors to build the pages
+    /// </summary>
     public class PageVM
     {
         public PageVM()

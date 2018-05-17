@@ -2,10 +2,14 @@
 using GradedUnit.Models.Data;
 using GradedUnit.Models.ViewModels.Shop;
 using PagedList;
+using Rotativa;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Mail;
 using System.Web;
 using System.Web.Helpers;
 using System.Web.Mvc;
@@ -15,6 +19,10 @@ namespace GradedUnit.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class ShopController : Controller
     {
+        /// <summary>
+        /// Initialises list of categories and passes it to the view model
+        /// </summary>
+        /// <returns>Takes user to the categories view</returns>
         // GET: Admin/Shop/Categories
         public ActionResult Categories()
         {
@@ -29,6 +37,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return view with list
             return View(categoryVMList);
         }
+        /// <summary>
+        /// Allows a user to create a new category for items within the shop
+        /// </summary>
+        /// <param name="catName"></param>
+        /// <returns>Returns the id of the category once it has been created</returns>
         // POST: Admin/Shop/AddNewCategory
         [HttpPost]
         public string AddNewCategory(string catName)
@@ -58,7 +71,10 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return id
             return id;
         }
-
+        /// <summary>
+        /// Allows a user to reorder how the categories will appear to a customer
+        /// </summary>
+        /// <param name="id"></param>
         //POST : Admin/Shop/ReorderCategories
         [HttpPost]
         public void ReorderCategories(int[] id)
@@ -81,7 +97,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             }
 
         }
-
+        /// <summary>
+        /// Allows a user to delete an existing category from the shop
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Redirects user to the categories view</returns>
         //GET : Admin/Shop/DeleteCategory/id
         public ActionResult DeleteCategory(int id)
         {
@@ -99,7 +119,12 @@ namespace GradedUnit.Areas.Admin.Controllers
             //redirect
             return RedirectToAction("Categories");
         }
-
+        /// <summary>
+        /// Allows a user to rename a category that exists and checks to see if the name is unique
+        /// </summary>
+        /// <param name="newCatName"></param>
+        /// <param name="id"></param>
+        /// <returns>return "titletaken" or returns "ok"</returns>
         [HttpPost]
         //GET : Admin/Shop/RenameCategory
         public string RenameCategory(string newCatName, int id)
@@ -121,7 +146,10 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return
             return "ok;";
         }
-
+        /// <summary>
+        /// Get method for adding a product to the shop
+        /// </summary>
+        /// <returns>Takes user to the add product view</returns>
         //GET : Admin/Shop/AddProduct
         [HttpGet]
         public ActionResult AddProduct()
@@ -138,7 +166,12 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return view with model
             return View(model);
         }
-
+        /// <summary>
+        /// Post method for adding a product to the shop
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="file"></param>
+        /// <returns>Returns error message if the product exists or confirmation if the product is created</returns>
         //POST : Admin/Shop/AddProduct
         [HttpPost]
         public ActionResult AddProduct(ProductVM model, HttpPostedFileBase file)
@@ -264,7 +297,12 @@ namespace GradedUnit.Areas.Admin.Controllers
             //redirect
             return RedirectToAction("AddProduct");
         }
-
+        /// <summary>
+        ///  Shows all of the products that are in the database
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="catId"></param>
+        /// <returns>Returns the products view with all the products visible</returns>
         //GET : Admin/Shop/Products
         public ActionResult Products(int? page, int? catId)
         {
@@ -292,7 +330,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return view
             return View(listOfProductVM);
         }
-
+        /// <summary>
+        /// Get method for editing a products information in the store
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns the edit products view</returns>
         //GET : Admin/Shop/EditProduct/id
         [HttpGet]
         public ActionResult EditProduct(int id)
@@ -320,6 +362,12 @@ namespace GradedUnit.Areas.Admin.Controllers
             //return view with model
             return View(model);
         }
+        /// <summary>
+        /// Post method for editing a product in the store
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="file"></param>
+        /// <returns>Returns an error message if the product name exists or displays confirmation a product has been edited</returns>
         [HttpPost]
         //POST : Admin/Shop/EditProduct/id
         public ActionResult EditProduct(ProductVM model, HttpPostedFileBase file)
@@ -434,7 +482,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             //redirect
             return RedirectToAction("EditProduct");
         }
-
+        /// <summary>
+        /// Allows a product to be deleted from the store and database
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Returns user to the products page</returns>
         //GET : Admin/Shop/DeleteProduct/id
         public ActionResult DeleteProduct(int id)
         {
@@ -456,10 +508,13 @@ namespace GradedUnit.Areas.Admin.Controllers
             //redirect
             return RedirectToAction("Products");
         }
-
+        /// <summary>
+        /// Allows a user to upload a number of images to be viewed in a gallery when viewing a product
+        /// </summary>
+        /// <param name="id"></param>
+        
         [HttpPost]
         //POST : Admin/Shop/SaveGalleryImages
-
         public void SaveGalleryImages(int id)
         {
             //loop through files
@@ -487,6 +542,11 @@ namespace GradedUnit.Areas.Admin.Controllers
             }
 
         }
+        /// <summary>
+        /// Allows a user to delete an image from the gallery
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="imageName"></param>
         [HttpPost]
         public void DeleteImage(int id, string imageName)
         {
@@ -499,7 +559,10 @@ namespace GradedUnit.Areas.Admin.Controllers
             if (System.IO.File.Exists(fullPath2))
                 System.IO.File.Delete(fullPath2);
         }
-
+        /// <summary>
+        /// Allows a user to view all of the orders that have been placed in the store
+        /// </summary>
+        /// <returns>Takes user to the ordersforadmin view</returns>
         //GET : Admin/Shop/Orders
         public ActionResult Orders()
         {
@@ -551,27 +614,57 @@ namespace GradedUnit.Areas.Admin.Controllers
                         CreatedAt = order.CreatedAt
                     });
 
+
                 }
             }
                 return View(ordersForAdmin);
         }
-
+        /// <summary>
+        /// Allows a user to delete an order that has been placed
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Redirects the user to the orders page or displays an error that the order cant be cancelled</returns>
         //GET : Admin/Shop/DeleteOrder/id
         public ActionResult DeleteOrder(int id)
         {
-            //delete product from db
+            
+            //delete the order from db
             using (Db db = new Db())
             {
                 OrderDTO dto = db.Orders.Find(id);
-                db.Orders.Remove(dto);
 
-                db.SaveChanges();
+                //check to see when the order was placed, if it is a day after they cant cancel the order
+                if (dto.CreatedAt.AddDays(1) < DateTime.Now)
+                {
+                    db.Orders.Remove(dto);
+                    db.SaveChanges();
+
+                    //init user dto
+                    UserDTO user = new UserDTO();
+                    //send an email to the user to tell them the order is cancelled
+                    var senderClient = new SmtpClient("smtp.gmail.com", 587)
+                    {
+                        Credentials = new NetworkCredential("markriact@gmail.com", "eprbdxwogucwqdic"),
+                        EnableSsl = true
+                    };
+                    senderClient.Send("markiact@gmail.com", user.EmailAddress, "Order has been cancelled", "Hello " + user.FirstName + " " + user.LastName + " A order you have placed has been cancelled, please contact the store to find out why!");
+                }
+                
             }
-            
             
 
             //redirect
             return RedirectToAction("Orders");
+        }
+        /// <summary>
+        /// Method for generating a PDF file of the orders view
+        /// </summary>
+        /// <param name="orders"></param>
+        /// <returns>Returns the pdf report</returns>
+        public ActionResult GenerateReport(OrdersForAdminVM orders)
+        {
+            var report = new ActionAsPdf("Orders", new { ordersForAdmin = orders });
+            return report;
         }
     }
     }

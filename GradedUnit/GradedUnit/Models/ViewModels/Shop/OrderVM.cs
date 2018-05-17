@@ -6,6 +6,9 @@ using System.Web;
 
 namespace GradedUnit.Models.ViewModels.Shop
 {
+    /// <summary>
+    /// View model with attributes and constructors for the viewing of orders
+    /// </summary>
     public class OrderVM
     {
 

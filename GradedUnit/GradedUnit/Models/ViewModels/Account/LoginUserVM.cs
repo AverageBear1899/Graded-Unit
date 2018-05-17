@@ -6,6 +6,9 @@ using System.Web;
 
 namespace GradedUnit.Models.ViewModels.Account
 {
+    /// <summary>
+    /// View model with attributes for the Login page
+    /// </summary>
     public class LoginUserVM
     {
         [Required]
