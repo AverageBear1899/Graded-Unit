@@ -22,7 +22,7 @@ namespace GradedUnit.Models.ViewModels.Account
             FirstName = row.FirstName;
             LastName = row.LastName;
             EmailAddress = row.EmailAddress;
-            Username = row.Username;
+            //Username = row.Username;
             Password = row.Password;
             Address = row.Address;
         }
@@ -33,8 +33,8 @@ namespace GradedUnit.Models.ViewModels.Account
         public string LastName { get; set; }
         [DataType(DataType.EmailAddress)]
         public string EmailAddress { get; set; }
-        [Required]
-        public string Username { get; set; }
+        //[Required]
+        //public string Username { get; set; }
         public string Password { get; set; }
         public string ConfirmPassword { get; set; }
         public string Address { get; set; }

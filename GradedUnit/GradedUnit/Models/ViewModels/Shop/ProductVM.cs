@@ -43,7 +43,7 @@ namespace GradedUnit.Models.ViewModels.Shop
         public int CategoryId { get; set; }
         public string ImageName { get; set; }
         public int Quantity { get; set; }
-
+        public string Error { get; set; }
         public IEnumerable <SelectListItem> Categories { get; set; }
         public IEnumerable<string> GalleryImages { get; set; }
     }

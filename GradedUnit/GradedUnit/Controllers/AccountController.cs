@@ -21,7 +21,7 @@ namespace GradedUnit.Controllers
             return Redirect("~/account/login");
         }
 
-        // GET: /account/login
+        
         /// <summary>
         /// Returns view that allows user to enter login details
         /// </summary>
@@ -39,7 +39,7 @@ namespace GradedUnit.Controllers
             return View();
         }
 
-        // POST: /account/login
+        
         /// <summary>
         /// Processes the information given by the user
         /// </summary>
@@ -77,7 +77,7 @@ namespace GradedUnit.Controllers
 
         }
 
-        // GET: /account/create-account
+        
         /// <summary>
         /// Allows user to enter desired account details
         /// </summary>
@@ -89,7 +89,7 @@ namespace GradedUnit.Controllers
             return View("CreateAccount");
         }
 
-        // POST: /account/create-account
+        
         /// <summary>
         /// Processes the information given by the user to create the account
         /// </summary>
@@ -159,23 +159,22 @@ namespace GradedUnit.Controllers
             return Redirect("~/account/login");
         }
 
-        // GET: /account/Logout
-        [Authorize]
         /// <summary>
         /// Provides user the ability to logout of their account
         /// </summary>
         /// <returns>Redirects the user to the login page</returns>
+        [Authorize]
         public ActionResult Logout()
         {
             FormsAuthentication.SignOut();
             return Redirect("~/account/login");
         }
 
-        [Authorize]
         /// <summary>
         /// Takes the users details to display a link to their account details using their first and last name
         /// </summary>
         /// <returns>Returns a partial view for the user navigation bar</returns>
+        [Authorize]
         public ActionResult UserNavPartial()
         {
             //get username
@@ -198,7 +197,6 @@ namespace GradedUnit.Controllers
             return PartialView(model);
         }
 
-        // GET: /account/user-profile
         /// <summary>
         /// Takes the users details from the database to build a view with their details filled in
         /// </summary>
@@ -227,7 +225,6 @@ namespace GradedUnit.Controllers
             return View("UserProfile", model);
         }
 
-        // POST: /account/user-profile
         /// <summary>
         /// Allows the user to update the fields of their account and saves the changes to the database
         /// </summary>
@@ -260,12 +257,12 @@ namespace GradedUnit.Controllers
                 string username = User.Identity.Name;
 
                 // Make sure username is unique
-                if (db.Users.Where(x => x.Id != model.Id).Any(x => x.Username == username))
-                {
-                    ModelState.AddModelError("", "Username " + model.Username + " already exists.");
-                    model.Username = "";
-                    return View("UserProfile", model);
-                }
+                //if (db.Users.Where(x => x.Id != model.Id).Any(x => x.Username == username))
+                //{
+                //    ModelState.AddModelError("", "Username " + model.Username + " already exists.");
+                //    model.Username = "";
+                //    return View("UserProfile", model);
+                //}
 
                 // Edit DTO
                 UserDTO dto = db.Users.Find(model.Id);
@@ -273,7 +270,7 @@ namespace GradedUnit.Controllers
                 dto.FirstName = model.FirstName;
                 dto.LastName = model.LastName;
                 dto.EmailAddress = model.EmailAddress;
-                dto.Username = model.Username;
+                //dto.Username = model.Username;
                 dto.Address = model.Address;
 
                 if (!string.IsNullOrWhiteSpace(model.Password))
@@ -291,11 +288,11 @@ namespace GradedUnit.Controllers
             // Redirect
             return Redirect("~/account/user-profile");
         }
+
         /// <summary>
         /// Alllows the user to view their orders
         /// </summary>
         /// <returns>Takes the user to their orders page</returns>
-        // GET: /account/orders
         [Authorize(Roles = "User")]
         public ActionResult Orders()
         {
@@ -351,7 +348,6 @@ namespace GradedUnit.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Returns the user to their orders page or displays an error that they cannot cancel their order</returns>
-        //GET : /account/DeleteOrder/id
         public ActionResult DeleteOrder(int id)
         {
             //delete product from db
@@ -373,7 +369,6 @@ namespace GradedUnit.Controllers
             }
         }
 
-        // GET: /account/create-account
         /// <summary>
         /// Allows user to enter desired account details
         /// </summary>
@@ -385,7 +380,6 @@ namespace GradedUnit.Controllers
             return View("CreateStaffAccount");
         }
 
-        // POST: /account/create-account
         /// <summary>
         /// Processes the information given by the user to create the staff account
         /// </summary>
@@ -452,7 +446,7 @@ namespace GradedUnit.Controllers
             };
             senderClient.Send("markiact@gmail.com", model.EmailAddress, "You have had a new Account created for you", "Hello " + model.FirstName + " " + model.LastName + " Welcome to the TShirt Company!");
             //redirect
-            return Redirect("~/admin/customers");
+            return Redirect("~/admin/dashboard");
         }
 
 

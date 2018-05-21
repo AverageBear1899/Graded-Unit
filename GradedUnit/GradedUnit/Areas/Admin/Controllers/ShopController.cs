@@ -162,6 +162,7 @@ namespace GradedUnit.Areas.Admin.Controllers
             using (Db db = new Db())
             {
                 model.Categories = new SelectList(db.Catagories.ToList(), "Id", "Name");
+                model.Error = "";
             }
 
             //return view with model
@@ -186,6 +187,15 @@ namespace GradedUnit.Areas.Admin.Controllers
                     model.Categories = new SelectList(db.Catagories.ToList(), "Id", "Name");
                     return View(model);
                 }
+            }
+            if (model.Quantity <= 0)
+            {
+                using (Db db = new Db())
+                {
+                    model.Error = "You cannot input a quantity less than 0";
+                    model.Categories = new SelectList(db.Catagories.ToList(), "Id", "Name");
+                }
+                return View(model);
             }
             //make sure product is unique
             using (Db db = new Db())
@@ -382,11 +392,23 @@ namespace GradedUnit.Areas.Admin.Controllers
             }
             model.GalleryImages = Directory.EnumerateFiles(Server.MapPath("~/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
                                                 .Select(fn => Path.GetFileName(fn));
-            //check model state
-            if (!ModelState.IsValid)
+
+            if (model.Quantity <= 0)
+            {
+                using (Db db = new Db())
+                {
+                    model.Error = "You cannot input a quantity less than 0";
+                    model.Categories = new SelectList(db.Catagories.ToList(), "Id", "Name");
+                }
+                return View(model);
+            }
+
+                //check model state
+                if (!ModelState.IsValid)
             {
                 return View(model);
             }
+
             //make sure product name is unique
             using (Db db = new Db())
             {
@@ -721,6 +743,8 @@ namespace GradedUnit.Areas.Admin.Controllers
             var report = new ActionAsPdf("Customers", new { customersForAdmin = users });
             return report;
         }
+
+
     }
     }
     
