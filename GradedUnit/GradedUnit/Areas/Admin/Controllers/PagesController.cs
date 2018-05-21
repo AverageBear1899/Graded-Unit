@@ -8,7 +8,7 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Areas.Admin.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Admin, Staff")]
 
     public class PagesController : Controller
     {

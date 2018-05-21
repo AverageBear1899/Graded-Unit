@@ -55,11 +55,24 @@ else
                     <td>
                         £@Html.DisplayFor(modelItem => item.Total)
                     </td>
+
                     @if (item.CreatedAt > DateTime.Now.AddHours(-24))
                     {
-                    <td>
-                        @Html.ActionLink("Cancel Order", "DeleteOrder", new { id = item.OrderNumber }) 
-                    </td>
+                        <td>
+                            @Html.ActionLink("Cancel Order", "DeleteOrder", new { id = item.OrderNumber })
+                        </td>
+                    }
+                    else if(item.CreatedAt > DateTime.Now.AddHours(-48))
+                    {
+                        <td>
+                            @Html.Label("Dispatched")
+                        </td>
+                    }
+                    else
+                    {
+                        <td>
+                            @Html.Label("Complete")
+                        </td>
                     }
                 </tr>
             }

@@ -373,7 +373,89 @@ namespace GradedUnit.Controllers
             }
         }
 
-            
+        // GET: /account/create-account
+        /// <summary>
+        /// Allows user to enter desired account details
+        /// </summary>
+        /// <returns>Returns the create account view</returns>
+        //[ActionName("create-account")]
+        [HttpGet]
+        public ActionResult CreateStaffAccount()
+        {
+            return View("CreateStaffAccount");
         }
+
+        // POST: /account/create-account
+        /// <summary>
+        /// Processes the information given by the user to create the staff account
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns>Redirects user to the login page or displays error message that the account creation failed</returns>
+        //[ActionName("create-account")]
+        [HttpPost]
+        public ActionResult CreateStaffAccount(UserVM model)
+        {
+            //check model state
+            if (!ModelState.IsValid)
+            {
+                return View("CreateStaffAccount", model);
+            }
+            //check passwords match
+            if (!model.Password.Equals(model.ConfirmPassword))
+            {
+                ModelState.AddModelError("", "Passwords don't match!");
+                return View("CreateStaffAccount", model);
+            }
+            using (Db db = new Db())
+            {
+                //check username is unique
+                if (db.Users.Any(x => x.Username.Equals(model.Username)))
+                {
+                    ModelState.AddModelError("", "Username " + model.Username + " is taken!");
+                    model.Username = "";
+                    return View("CreateStaffAccount", model);
+                }
+                //create dto
+                UserDTO userDTO = new UserDTO()
+                {
+                    FirstName = model.FirstName,
+                    LastName = model.LastName,
+                    EmailAddress = model.EmailAddress,
+                    Username = model.Username,
+                    Password = model.Password,
+                    Address = model.Address
+                };
+                //add the dto
+                db.Users.Add(userDTO);
+                //save
+                db.SaveChanges();
+
+                //add to userrolesdto
+                int id = userDTO.Id;
+                UserRoleDTO userRoleDTO = new UserRoleDTO()
+                {
+                    UserId = id,
+                    RoleId = 3
+                };
+                db.UserRoles.Add(userRoleDTO);
+                db.SaveChanges();
+
+            }
+            //create a  message
+            TempData["SM"] = "The staff member is now registered and can now log in.";
+
+            //Email user
+            var senderClient = new SmtpClient("smtp.gmail.com", 587)
+            {
+                Credentials = new NetworkCredential("markriact@gmail.com", "eprbdxwogucwqdic"),
+                EnableSsl = true
+            };
+            senderClient.Send("markiact@gmail.com", model.EmailAddress, "You have had a new Account created for you", "Hello " + model.FirstName + " " + model.LastName + " Welcome to the TShirt Company!");
+            //redirect
+            return Redirect("~/admin/customers");
+        }
+
+
+    }
 
     }
