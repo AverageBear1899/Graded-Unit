@@ -359,8 +359,8 @@ namespace GradedUnit.Controllers
             {
                 OrderDTO dto = db.Orders.Find(id);
 
-                if (dto.CreatedAt.AddDays(1) < DateTime.Now)
-                {
+                if (dto.CreatedAt > DateTime.Now.AddHours(-24))
+                    {
                     db.Orders.Remove(dto);
                     db.SaveChanges();
                 }

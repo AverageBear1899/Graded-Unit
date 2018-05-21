@@ -1,5 +1,6 @@
 ﻿using GradedUnit.Areas.Admin.Models.ViewModels.Shop;
 using GradedUnit.Models.Data;
+using GradedUnit.Models.ViewModels.Account;
 using GradedUnit.Models.ViewModels.Shop;
 using PagedList;
 using Rotativa;
@@ -634,22 +635,22 @@ namespace GradedUnit.Areas.Admin.Controllers
                 OrderDTO dto = db.Orders.Find(id);
 
                 //check to see when the order was placed, if it is a day after they cant cancel the order
-                if (dto.CreatedAt.AddDays(1) < DateTime.Now)
+                if (dto.CreatedAt > DateTime.Now.AddHours(-24))
                 {
                     db.Orders.Remove(dto);
                     db.SaveChanges();
 
-                    //init user dto
-                    UserDTO user = new UserDTO();
-                    //send an email to the user to tell them the order is cancelled
-                    var senderClient = new SmtpClient("smtp.gmail.com", 587)
-                    {
-                        Credentials = new NetworkCredential("markriact@gmail.com", "eprbdxwogucwqdic"),
-                        EnableSsl = true
-                    };
-                    senderClient.Send("markiact@gmail.com", user.EmailAddress, "Order has been cancelled", "Hello " + user.FirstName + " " + user.LastName + " A order you have placed has been cancelled, please contact the store to find out why!");
+                    ////init user dto
+                    //UserDTO user = new UserDTO();
+                    ////send an email to the user to tell them the order is cancelled
+                    //var senderClient = new SmtpClient("smtp.gmail.com", 587)
+                    //{
+                    //    Credentials = new NetworkCredential("markriact@gmail.com", "eprbdxwogucwqdic"),
+                    //    EnableSsl = true
+                    //};
+                    //senderClient.Send("markiact@gmail.com", user.EmailAddress, "Order has been cancelled", "Hello " + user.FirstName + " " + user.LastName + "," + " " + " An order you have placed has been cancelled, please contact the store to find out why!");
                 }
-                
+
             }
             
 
@@ -666,6 +667,61 @@ namespace GradedUnit.Areas.Admin.Controllers
             var report = new ActionAsPdf("Orders", new { ordersForAdmin = orders });
             return report;
         }
+        /// <summary>
+        /// Generates a view with all of the users that are in the database
+        /// </summary>
+        /// <returns>Returns the customers view</returns>
+        //GET : Admin/Shop/Customers
+        public ActionResult Customers()
+        {
+            //init list of Customers
+            List<CustomersForAdminVM> customersForAdmin = new List<CustomersForAdminVM>();
+
+            using (Db db = new Db())
+            {
+                //init list of customerVMs
+                List<UserVM> users = db.Users.ToArray().Select(x => new UserVM(x)).ToList();
+                //loop through list of customerVMS
+
+                foreach (var customer in users)
+                {
+                   
+                    //init list of CustomerDetails
+                    List<UserDTO> customerDetailsList = db.Users.Where(x => x.Id == customer.Id).ToList();
+
+                    UserDTO user = db.Users.Where(x => x.Id == customer.Id).FirstOrDefault();
+                    string username = user.Username;
+                    string firstname = user.FirstName;
+                    string lastname = user.LastName;
+                    string email = user.EmailAddress;
+
+                    //add to CustomersForAdminVM list
+                    customersForAdmin.Add(new CustomersForAdminVM()
+                    {
+                        UserId = user.Id,
+                        Username = username,
+                        FirstName = firstname,
+                        LastName = lastname,
+                        EmailAddress = email
+                    });
+
+
+                }
+            }
+            return View(customersForAdmin);
+        }
+        
+        /// <summary>
+        /// Method for generating a PDF file of the users view
+        /// </summary>
+        /// <param name="orders"></param>
+        /// <returns>Returns the pdf report</returns>
+        public ActionResult GenerateReportUsers(CustomersForAdminVM users)
+        {
+            var report = new ActionAsPdf("Customers", new { customersForAdmin = users });
+            return report;
+        }
     }
     }
+    
 

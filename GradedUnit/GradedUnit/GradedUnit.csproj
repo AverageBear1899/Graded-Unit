@@ -144,6 +144,7 @@
     <Compile Include="Areas\Admin\Controllers\DashboardController.cs" />
     <Compile Include="Areas\Admin\Controllers\PagesController.cs" />
     <Compile Include="Areas\Admin\Controllers\ShopController.cs" />
+    <Compile Include="Areas\Admin\Models\ViewModels\Shop\CustomersForAdminVM.cs" />
     <Compile Include="Areas\Admin\Models\ViewModels\Shop\OrdersForAdminVM.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CartController.cs" />
@@ -282,6 +283,7 @@
     <Content Include="Areas\Admin\Views\Shop\EditProduct.cshtml" />
     <Content Include="Areas\Admin\Views\Shop\Orders.cshtml" />
     <Content Include="App_Browsers\qt.browser" />
+    <Content Include="Areas\Admin\Views\Shop\Customers.cshtml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\ckeditor\ckeditor_source.js" />
     <Content Include="Scripts\ckeditor\config.js" />
