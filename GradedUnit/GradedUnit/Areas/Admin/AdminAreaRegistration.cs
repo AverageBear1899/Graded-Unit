@@ -2,6 +2,9 @@
 
 namespace GradedUnit.Areas.Admin
 {
+    /// <summary>
+    /// Class which holds information about the Admin area
+    /// </summary>
     public class AdminAreaRegistration : AreaRegistration 
     {
         /// <summary>

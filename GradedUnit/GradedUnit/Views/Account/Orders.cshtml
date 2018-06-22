@@ -44,9 +44,19 @@ else
         <td>
             @Html.DisplayFor(modelItem => item.CreatedAt)
         </td>
-        <td>
-            £@Html.DisplayFor(modelItem => item.Total)
-        </td>
+        @if (item.Total == 0)
+                    {
+            <td>
+                This product no longer exists
+            </td>
+        }
+        else
+        {
+            <td>
+
+                £@Html.DisplayFor(modelItem => item.Total)
+            </td>
+        }
         @*@if (item.CreatedAt.AddDays(1) < DateTime.Now)*@
         @if (item.CreatedAt > DateTime.Now.AddHours(-24))
                     {

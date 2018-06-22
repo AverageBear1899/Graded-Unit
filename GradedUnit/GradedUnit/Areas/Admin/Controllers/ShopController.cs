@@ -1,4 +1,6 @@
-﻿using GradedUnit.Areas.Admin.Models.ViewModels.Shop;
+﻿//Mark Riley
+//30/05/18
+using GradedUnit.Areas.Admin.Models.ViewModels.Shop;
 using GradedUnit.Models.Data;
 using GradedUnit.Models.ViewModels.Account;
 using GradedUnit.Models.ViewModels.Shop;
@@ -17,6 +19,9 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Areas.Admin.Controllers
 {
+    /// <summary>
+    /// Controller that holds the actions available to control the shop
+    /// </summary>
     [Authorize(Roles = "Admin, Staff")]
     public class ShopController : Controller
     {
@@ -188,15 +193,29 @@ namespace GradedUnit.Areas.Admin.Controllers
                     return View(model);
                 }
             }
-            if (model.Quantity <= 0)
+            //checks to see if the quantity is lower than 0 and produces an error
+            if (model.Quantity <= 0 || model.Price <= 0)
             {
                 using (Db db = new Db())
                 {
-                    model.Error = "You cannot input a quantity less than 0";
+                    model.Error = "Invalid Details, you cant enter negative numbers or 0";
                     model.Categories = new SelectList(db.Catagories.ToList(), "Id", "Name");
                 }
                 return View(model);
             }
+
+            
+
+            //if (model.ImageName.Length == 0)
+            //{
+            //    using (Db db = new Db())
+            //    {
+            //        model.Error = "You must upload an image";
+            //        model.Categories = new SelectList(db.Catagories.ToList(), "Id", "Name");
+            //    }
+            //    return View(model);
+            //}
+
             //make sure product is unique
             using (Db db = new Db())
             {
@@ -280,14 +299,21 @@ namespace GradedUnit.Areas.Admin.Controllers
                             ModelState.AddModelError("", "The Image was not uploaded - wrong image extension.");
                             return View(model);
                         }
+
+
                     }
                 }
+
+                
+
                 //init image name
                 string imageName = file.FileName;
                 //save image to dto
+
                 using (Db db = new Db())
                 {
                     ProductDTO dto = db.Products.Find(id);
+
                     dto.ImageName = imageName;
 
                     db.SaveChanges();
@@ -393,18 +419,19 @@ namespace GradedUnit.Areas.Admin.Controllers
             model.GalleryImages = Directory.EnumerateFiles(Server.MapPath("~/Images/Uploads/Products/" + id + "/Gallery/Thumbs"))
                                                 .Select(fn => Path.GetFileName(fn));
 
-            if (model.Quantity <= 0)
+            //checks to see if the quantity is lower than 0 and produces an error
+            if (model.Quantity <= 0 || model.Price <= 0)
             {
                 using (Db db = new Db())
                 {
-                    model.Error = "You cannot input a quantity less than 0";
+                    model.Error = "Invalid Details, you cant enter negative numbers or 0";
                     model.Categories = new SelectList(db.Catagories.ToList(), "Id", "Name");
                 }
                 return View(model);
             }
 
-                //check model state
-                if (!ModelState.IsValid)
+            //check model state
+            if (!ModelState.IsValid)
             {
                 return View(model);
             }
@@ -521,13 +548,14 @@ namespace GradedUnit.Areas.Admin.Controllers
 
                 db.SaveChanges();
             }
+
             //delete product folder
-            var originalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
-            string pathString = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
+            //var originalDirectory = new DirectoryInfo(string.Format("{0}Images\\Uploads", Server.MapPath(@"\")));
+            //string pathString = Path.Combine(originalDirectory.ToString(), "Products\\" + id.ToString());
 
-            if (Directory.Exists(pathString))
-                Directory.Delete(pathString, true);
-
+            //if (Directory.Exists(pathString))
+            //Directory.Delete(pathString, true);
+            
             //redirect
             return RedirectToAction("Products");
         }
@@ -655,10 +683,18 @@ namespace GradedUnit.Areas.Admin.Controllers
             using (Db db = new Db())
             {
                 OrderDTO dto = db.Orders.Find(id);
+                //Adds quantity ordered back to the products quantity when an order is cancelled
+                List<OrderDetailsDTO> orderDetails = db.OrderDetails.Where(x => x.OrderId == id).ToList();
 
+                foreach (var line in orderDetails)
+                {
+                    line.Products.Quantity = (line.Products.Quantity + line.Quantity);
+                    db.Entry(line.Products).State = EntityState.Modified;
+                }
                 //check to see when the order was placed, if it is a day after they cant cancel the order
                 if (dto.CreatedAt > DateTime.Now.AddHours(-24))
                 {
+                    
                     db.Orders.Remove(dto);
                     db.SaveChanges();
 
@@ -736,7 +772,7 @@ namespace GradedUnit.Areas.Admin.Controllers
         /// <summary>
         /// Method for generating a PDF file of the users view
         /// </summary>
-        /// <param name="orders"></param>
+        /// <param name="users"></param>
         /// <returns>Returns the pdf report</returns>
         public ActionResult GenerateReportUsers(CustomersForAdminVM users)
         {

@@ -87,6 +87,8 @@ else
 
         </table>
 
+    if (Request.IsAuthenticated && User.IsInRole("User"))
+    {
         <div class="paypaldiv">
             <form class="paypalform" action="https://www.sandbox.paypal.com/cgi-bin/webscr" method="post">
                 <input type="hidden" name="cmd" value="_cart">
@@ -108,7 +110,14 @@ else
             </form>
         </div>
         <br />
+
+
         <a href="#" class="placeorder btn btn-primary pull-right">Checkout</a>
+    }
+    else
+    {
+        <h3>You arent logged in</h3>
+    }
 
 }
 

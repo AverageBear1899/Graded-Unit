@@ -1,4 +1,6 @@
-﻿using GradedUnit.Models.Data;
+﻿//Mark Riley
+//30/05/18
+using GradedUnit.Models.Data;
 using GradedUnit.Models.ViewModels.Pages;
 using System;
 using System.Collections.Generic;
@@ -8,8 +10,10 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Areas.Admin.Controllers
 {
+    /// <summary>
+    /// Pages controller class which holds actions in relation to the pages on the website
+    /// </summary>
     [Authorize(Roles = "Admin, Staff")]
-
     public class PagesController : Controller
     {
         /// <summary>

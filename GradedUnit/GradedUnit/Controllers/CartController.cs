@@ -11,6 +11,9 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Controllers
 {
+    /// <summary>
+    /// Controller that deals with adding/removing items to the cart
+    /// </summary>
     public class CartController : Controller
     {
         /// <summary>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="e8ae3ec4d0f94f168a4e6f535aacbbe7" Name="Diagram1">
+        <EntityTypeShape EntityType="GradedUnitModel.C__MigrationHistory" Width="1.5" PointX="7.75" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GradedUnitModel.tblCatagory" Width="1.5" PointX="3" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="GradedUnitModel.tblOrderDetail" Width="1.5" PointX="7.5" PointY="1.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="GradedUnitModel.tblOrder" Width="1.5" PointX="5.25" PointY="1.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="GradedUnitModel.tblPage" Width="1.5" PointX="7.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GradedUnitModel.tblProduct" Width="1.5" PointX="5.25" PointY="4.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GradedUnitModel.tblRole" Width="1.5" PointX="0.75" PointY="1.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="GradedUnitModel.tblSidebar" Width="1.5" PointX="0.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="GradedUnitModel.tblUser" Width="1.5" PointX="3" PointY="1" IsExpanded="true" />
+        <AssociationConnector Association="GradedUnitModel.FK_dbo_tblProducts_dbo_tblCatagories_CategoryId" ManuallyRouted="false" />
+        <AssociationConnector Association="GradedUnitModel.FK_dbo_tblOrderDetails_dbo_tblOrders_OrderId" ManuallyRouted="false" />
+        <AssociationConnector Association="GradedUnitModel.FK_dbo_tblOrderDetails_dbo_tblProducts_ProductId" ManuallyRouted="false" />
+        <AssociationConnector Association="GradedUnitModel.FK_dbo_tblOrders_dbo_tblUsers_UserId" ManuallyRouted="false" />
+        <AssociationConnector Association="GradedUnitModel.tblUserRoles" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

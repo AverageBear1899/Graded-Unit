@@ -8,6 +8,9 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Controllers
 {
+    /// <summary>
+    /// Controller that deals with the viewing of pages
+    /// </summary>
     public class PagesController : Controller
     {
         // GET: Index/{page}

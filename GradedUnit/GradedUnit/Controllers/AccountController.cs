@@ -13,8 +13,15 @@ using System.Web.Security;
 
 namespace GradedUnit.Controllers
 {
+    /// <summary>
+    /// Controller that deals with the creation and editing of accounts
+    /// </summary>
     public class AccountController : Controller
     {
+        /// <summary>
+        /// Index
+        /// </summary>
+        /// <returns>Returns index view</returns>
         // GET: Account
         public ActionResult Index()
         {
@@ -342,18 +349,26 @@ namespace GradedUnit.Controllers
             }
                 return View(ordersForUser);
         }
-        [Authorize(Roles="User")]
         /// <summary>
         /// Allows the user to cancel their order
         /// </summary>
         /// <param name="id"></param>
         /// <returns>Returns the user to their orders page or displays an error that they cannot cancel their order</returns>
+        [Authorize(Roles="User")]
         public ActionResult DeleteOrder(int id)
         {
             //delete product from db
             using (Db db = new Db())
             {
                 OrderDTO dto = db.Orders.Find(id);
+                //list of orderdetails
+                List<OrderDetailsDTO> orderDetails = db.OrderDetails.Where(x => x.OrderId == id).ToList();
+                //adds the quantity back to the store
+                foreach (var line in orderDetails)
+                {
+                    line.Products.Quantity = (line.Products.Quantity + line.Quantity);
+                    db.Entry(line.Products).State = EntityState.Modified;
+                }
 
                 if (dto.CreatedAt > DateTime.Now.AddHours(-24))
                     {

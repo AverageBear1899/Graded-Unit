@@ -52,9 +52,19 @@ else
                     <td>
                         @Html.DisplayFor(modelItem => item.CreatedAt)
                     </td>
+                    @if (item.Total == 0)
+                    {
+                        <td>
+                            This product no longer exists
+                        </td>
+                    }
+                    else
+                    {
                     <td>
+
                         £@Html.DisplayFor(modelItem => item.Total)
                     </td>
+                    }
 
                     @if (item.CreatedAt > DateTime.Now.AddHours(-24))
                     {
@@ -62,12 +72,18 @@ else
                             @Html.ActionLink("Cancel Order", "DeleteOrder", new { id = item.OrderNumber })
                         </td>
                     }
-                    else if(item.CreatedAt > DateTime.Now.AddHours(-48))
+                    else if (item.CreatedAt > DateTime.Now.AddHours(-48))
                     {
                         <td>
                             @Html.Label("Dispatched")
                         </td>
                     }
+                    @*else if (item.ProductsAndQty.Count == 0)
+                        {
+                            <td>
+                                @Html.Label("This order cannot be cancelled due to an error")
+                            </td>
+                        }*@
                     else
                     {
                         <td>

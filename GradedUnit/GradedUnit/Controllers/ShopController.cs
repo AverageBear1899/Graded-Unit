@@ -9,6 +9,9 @@ using System.Web.Mvc;
 
 namespace GradedUnit.Controllers
 {
+    /// <summary>
+    /// Controller that holds the actions primarily dealing with the categories and product details in the shop
+    /// </summary>
     public class ShopController : Controller
     {
         // GET: Shop
@@ -57,7 +60,14 @@ namespace GradedUnit.Controllers
                 productVMList = db.Products.ToArray().Where(x => x.CategoryId == catId).Select(x => new ProductVM(x)).ToList();
                // get category name
                 var productCat = db.Products.Where(x => x.CategoryId == catId).FirstOrDefault();
-                 ViewBag.CategoryName = productCat.CategoryName;
+                if (productCat == null)
+                {
+                    return View(productVMList);
+                }
+                else
+                {
+                    ViewBag.CategoryName = productCat.CategoryName;
+                }
 
             }
             //return view with list
